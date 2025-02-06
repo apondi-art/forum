@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup Form</title>
+    <style>
+        body {
+            background-color: #EAEFF4;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #signup-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+        h2, p {
+            color: #1D2B3A;
+        }
+        .input-field {
+            
+            width: calc(100% - 24px);
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .password-wrapper {
+            position: relative;
+        }
+        .icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+        .login-text {
+            margin-top: 12px;
+            font-size: 14px;
+        }
+        .login-link {
+            color: #1D2B3A;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        #signup-button {
+            background: #B13E10;
+            color: white;
+            padding: 14px;
+            width: 100%;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="signup-container">
+        <h2>Let's sign up.</h2>
+        <p>Welcome to The Forum Platform!</p>
+        
+        <form id="signup-form">
+            <input type="text" placeholder="Username" class="input-field">
+            <input type="email" placeholder="Your email" class="input-field">
+            
+            <div class="password-wrapper">
+                <input type="text" placeholder="Password" class="input-field">
+                <span class="icon">🔒</span>
+            </div>
+            <div class="password-wrapper">
+                <input type="text" placeholder="Re-Password" class="input-field">
+                <span class="icon">🔒</span>
+            </div>
+            
+            <p class="login-text">Have an account? <a href="#" class="login-link">Log in</a></p>
+            
+            <button type="submit" id="signup-button">Next</button>
+        </form>
+    </div>
+</body>
+</html>
