@@ -1,4 +1,4 @@
-CREATE TABLE Users (
+CREATE TABLE IF NOT EXISTS Users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
     email TEXT UNIQUE NOT NULL,
@@ -6,7 +6,7 @@ CREATE TABLE Users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE Posts (
+CREATE TABLE IF NOT EXISTS Posts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     title TEXT NOT NULL,
@@ -17,7 +17,7 @@ CREATE TABLE Posts (
 );
 
 
-CREATE TABLE Comments (
+CREATE TABLE IF NOT EXISTS Comments (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     post_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
@@ -28,12 +28,12 @@ CREATE TABLE Comments (
     FOREIGN KEY (user_id) REFERENCES Users(id)
 );
 
-CREATE TABLE Categories (
+CREATE TABLE IF NOT EXISTS Categories (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT UNIQUE NOT NULL,
+    name TEXT UNIQUE NOT NULL
 );
 
-CREATE TABLE Post_Categories (
+CREATE TABLE IF NOT EXISTS Post_Categories (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     post_id INTEGER NOT NULL,
     category_id INTEGER NOT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE Post_Categories (
     UNIQUE (post_id, category_id) -- Ensure a post-category combination is unique
 );
 
-CREATE TABLE Likes_Dislikes (
+CREATE TABLE IF NOT EXISTS Likes_Dislikes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     post_id INTEGER,
