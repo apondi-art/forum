@@ -60,10 +60,19 @@
             padding: 14px;
             width: 100%;
             border: none;
-            border-radius: 8px;
+            border-radius: 45px;
             font-size: 16px;
             cursor: pointer;
             margin-top: 10px;
+        }
+        a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -72,20 +81,20 @@
         <h2>Let's sign up.</h2>
         <p>Welcome to The Forum Platform!</p>
         
-        <form id="signup-form">
-            <input type="text" placeholder="Username" class="input-field">
-            <input type="email" placeholder="Your email" class="input-field">
+        <form action ="/signup" method="POST">
+            <input type="text" placeholder="Username" class="input-field" required>
+            <input type="email" placeholder="Your email" class="input-field" required>
             
             <div class="password-wrapper">
-                <input type="text" placeholder="Password" class="input-field">
+                <input type="text" placeholder="Password" class="input-field" required>
                 <span class="icon">🔒</span>
             </div>
             <div class="password-wrapper">
-                <input type="text" placeholder="Re-Password" class="input-field">
+                <input type="text" placeholder="Re-Password" class="input-field" required>
                 <span class="icon">🔒</span>
             </div>
             
-            <p class="login-text">Have an account? <a href="#" class="login-link">Log in</a></p>
+            <p class="login-text">Have an account? <a href="login" class="login-link">Log in</a></p>
             
             <button type="submit" id="signup-button">Next</button>
         </form>
