@@ -10,7 +10,7 @@ import (
 )
 
 func Homepage(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := template.ParseFiles("/home/hilaromondi/zero/forum/internals/templates/index.html")
+	tmpl, err := template.ParseFiles("templates/index.html")
 	if err != nil {
 		fmt.Printf("Error during parsing template %v\n", err)
 		return
@@ -21,7 +21,7 @@ func Homepage(w http.ResponseWriter, r *http.Request) {
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	// Serve the login page for GET requests
 	if r.Method == http.MethodGet {
-		tmpl, err := template.ParseFiles("/home/hilaromondi/zero/forum/internals/templates/index.html")
+		tmpl, err := template.ParseFiles("templates/index.html")
 		if err != nil {
 			http.Error(w, "Error loading login template", http.StatusInternalServerError)
 			return
