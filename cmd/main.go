@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 
+	"forum/internals/database"
 	"forum/internals/handlers"
 )
 
@@ -17,6 +18,10 @@ func main() {
 	
     fs := http.FileServer(http.Dir("static"))
     http.Handle("/static/", http.StripPrefix("/static/", fs))
+
+	if err := database.InitDB(); err != nil {
+		log.Fatalf("Failed to initialize database: %v", err)
+	}
 
 	http.HandleFunc("/", handlers.Homepage)
     http.HandleFunc("/login",handlers.LoginHandler)
