@@ -15,13 +15,19 @@ func main() {
 		fmt.Println("Too much arguments")
 		return
 	}
+	
+    fs := http.FileServer(http.Dir("static"))
+    http.Handle("/static/", http.StripPrefix("/static/", fs))
 
 	if err := database.InitDB(); err != nil {
 		log.Fatalf("Failed to initialize database: %v", err)
 	}
 
 	http.HandleFunc("/", handlers.Homepage)
-	fmt.Println("Server listen on : http://localhost:8080")
+    http.HandleFunc("/login",handlers.LoginHandler)
+	http.HandleFunc("/signup", handlers.SignUpHandler)
+	log.Println("Server listen on : http://localhost:8080")
+
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatal(err)
 	}
