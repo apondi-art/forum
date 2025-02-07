@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 
+	"forum/internals/database"
 	"forum/internals/handlers"
 )
 
@@ -13,6 +14,10 @@ func main() {
 	if len(os.Args) > 1 {
 		fmt.Println("Too much arguments")
 		return
+	}
+
+	if err := database.InitDB(); err != nil {
+		log.Fatalf("Failed to initialize database: %v", err)
 	}
 
 	http.HandleFunc("/", handlers.Homepage)
