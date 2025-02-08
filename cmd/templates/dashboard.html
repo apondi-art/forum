@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage</title>
+    <link rel="stylesheet" href="static/css/styles.css">  
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container-md">
+            <a class="forum" href="#">FORUM</a>
+            {{if .IsLoggedIn}}
+                <!-- Display user-specific navigation when logged in -->
+                <div class="user-nav">
+                    <span class="username">Welcome, {{.Username}}!</span>
+                    <a class="nav-link" href="#" id="createPostBtn">Create Post</a>
+                    <div class="dropdown">
+                        <button class="dropbtn">My Activity</button>
+                        <div class="dropdown-content">
+                            <a href="#">My Posts</a>
+                            <a href="#">My Comments</a>
+                            <a href="#">My Likes</a>
+                        </div>
+                    </div>
+                    <a class="nav-link" href="#" id="logoutBtn">Log out</a>
+                </div>
+            {{else}}
+                <!-- Display login/signup buttons when not logged in -->
+                <a class="login" href="#" id="loginBtn">Log in</a>
+                <a class="login" href="#" id="signupBtn">Sign up</a>
+            {{end}}
+        </div>
+    </nav>
+
+    <!-- Modal for Signup -->
+    <div id="signupModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="signupCloseBtn">&times;</span>
+            <h1>Sign Up</h1>
+            <form id="signupForm">
+                <input type="text" placeholder="Username" class="input-field" required>
+                <input type="email" placeholder="Your email" class="input-field" required>
+                <input type="password" placeholder="Password" class="input-field" required>
+                <input type="password" placeholder="Re-Password" class="input-field" required>
+                <button type="submit">Sign up</button>
+            </form>
+            <p>Already have an account? <a href="#" id="openLoginFromSignup">Log in</a></p>
+        </div>
+    </div>
+
+    <!-- Modal for Login -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="loginCloseBtn">&times;</span>
+            <h1>Login</h1>
+            <form id="loginForm">
+                <input type="text" placeholder="Username or Email" class="input-field" required>
+                <input type="password" placeholder="Password" class="input-field" required>
+                <button type="submit">Login</button>
+            </form>
+            <p>Don't have an account? <a href="#" id="openSignupFromLogin">Sign up</a></p>
+        </div>
+    </div>
+
+    <section class="filter-content">
+        <!-- Left Section for Filters -->
+        <div class="left-section">
+            <h2>Filter Categories</h2>
+            <form>
+                <label>
+                    <input type="checkbox" name="category1"> Category 1
+                </label>
+                <label>
+                    <input type="checkbox" name="category2"> Category 2
+                </label>
+                <label>
+                    <input type="checkbox" name="category3"> Category 3
+                </label>
+                <label>
+                    <input type="checkbox" name="category3"> Category 4
+                </label>
+                <label>
+                    <input type="checkbox" name="category3"> Category 5
+                </label>
+                <button type="submit">Apply Filters</button>
+            </form>
+        </div>
+         <!-- Right Section for Content -->
+         <div class="right-section">
+            <h3>Content Area</h3>
+        </div>
+    </section>
+
+    <script src="static/js/post.js"></script>
+</body>
+</html>
