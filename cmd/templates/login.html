@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup Form</title>
+    <style>
+        body {
+            background-color: #EAEFF4;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #signup-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h2,
+        p {
+            color: #1D2B3A;
+        }
+
+        .input-field {
+
+            width: calc(100% - 24px);
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        .login-text {
+            margin-top: 12px;
+            font-size: 14px;
+        }
+
+        .login-link {
+            color: #1D2B3A;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        #signup-button {
+            background: #B13E10;
+            color: white;
+            padding: 14px;
+            width: 100%;
+            border: none;
+            border-radius: 45px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="signup-container">
+        <h2>Let's Login.</h2>
+        <p>Welcome to The Forum Platform!</p>
+
+        <form action="/login/dashboard" method="POST">
+            <input type="email" placeholder="Your email" name="email" class="input-field" required>
+
+            <div class="password-wrapper">
+                <input type="text" placeholder="Password" name="password" class="input-field" required>
+                <span class="icon">🔒</span>
+            </div>
+
+
+            <p class="login-text">Dont have an account? <a href="/signup" class="login-link">Sign Up</a></p>
+
+            <button type="submit" id="signup-button">Next</button>
+        </form>
+    </div>
+</body>
+
+</html>
