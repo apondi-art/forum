@@ -24,8 +24,10 @@ func main() {
 	}
 
 	http.HandleFunc("/", handlers.Homepage)
-    http.HandleFunc("/login",handlers.LoginHandler)
-	http.HandleFunc("/signup", handlers.SignUpHandler)
+   	http.HandleFunc("/signup", handlers.SignupPageHandler)
+	http.HandleFunc("/login",handlers.LoginPageHandler)
+	http.HandleFunc("/login/dashboard",handlers.LoginHandler)
+	http.HandleFunc("/signup/process", handlers.SignUpHandlerProcess)
 	log.Println("Server listen on : http://localhost:8080")
 
 	if err := http.ListenAndServe(":8080", nil); err != nil {
