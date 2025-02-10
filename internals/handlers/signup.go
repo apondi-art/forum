@@ -2,8 +2,9 @@ package handlers
 
 import (
 	"fmt"
-	"forum/internals/models/usermodel"
 	"net/http"
+
+	"forum/internals/models/usermodel"
 )
 
 func SignupPageHandler(w http.ResponseWriter, r *http.Request) {
@@ -15,7 +16,6 @@ func SignupPageHandler(w http.ResponseWriter, r *http.Request) {
 	// Serve the signup page (ensure "signup.html" exists inside "templates/")
 	http.ServeFile(w, r, "templates/signup.html")
 }
-
 
 func SignUpHandlerProcess(w http.ResponseWriter, r *http.Request) {
 	// Ensure it's a POST request
@@ -52,7 +52,7 @@ func SignUpHandlerProcess(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Error hashing password:", err)
 		return
 	}
-fmt.Println(username,email,hashedPassword)
+	fmt.Println(username, email, hashedPassword)
 	// Store user in the database
 	if err := usermodel.CreateUser(username, email, hashedPassword); err != nil {
 		http.Error(w, "Failed to create user", http.StatusInternalServerError)
@@ -62,5 +62,5 @@ fmt.Println(username,email,hashedPassword)
 
 	// Success response
 	w.WriteHeader(http.StatusCreated)
-	fmt.Fprintln(w, "User created successfully")
+	// fmt.Fprintln(w, "User created successfully")
 }
