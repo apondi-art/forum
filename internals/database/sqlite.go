@@ -41,7 +41,7 @@ func InitDB() error {
 
 // Create tables using schema.sql
 func createTables() error {
-	schema, err := os.ReadFile("/home/quinterabok/module-project/forum/internals/database/schema.sql") // Read the schema.sql file
+	schema, err := os.ReadFile("../internals/database/schema.sql") // Read the schema.sql file
 	if err != nil {
 		return fmt.Errorf("failed to read schema file: %v", err)
 	}
