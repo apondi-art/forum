@@ -62,3 +62,32 @@ func GetReactionCounts(postID int64) (likes int, dislikes int, error error) {
 	}
 	return likes, dislikes, nil
 }
+
+// GetCommentReactionCounts gets likes/dislikes for a comment
+func GetCommentReactionCounts(commentID int64) (likes int, dislikes int, err error) {
+	query := `
+        SELECT reaction_type, COUNT(*) 
+        FROM Likes_Dislikes 
+        WHERE comment_id = ? 
+        GROUP BY reaction_type
+    `
+	rows, err := database.DB.Query(query, commentID)
+	if err != nil {
+		return 0, 0, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var reactionType string
+		var count int
+		if err := rows.Scan(&reactionType, &count); err != nil {
+			return 0, 0, err
+		}
+		if reactionType == "like" {
+			likes = count
+		} else {
+			dislikes = count
+		}
+	}
+	return likes, dislikes, nil
+}
