@@ -9,7 +9,7 @@
 <body>
     <nav class="navbar">
         <div class="container-md">
-            <a class="forum" href="#">FORUM</a>
+            <a class="forum" href="/">FORUM</a>
             {{if .IsLoggedIn}}
                 <!-- Display user-specific navigation when logged in -->
                 <div class="user-nav">
@@ -33,21 +33,7 @@
         </div>
     </nav>
 
-    <!-- Modal for Signup -->
-    <div id="signupModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="signupCloseBtn">&times;</span>
-            <h1>Sign Up</h1>
-            <form id="signupForm">
-                <input type="text" placeholder="Username" class="input-field" required>
-                <input type="email" placeholder="Your email" class="input-field" required>
-                <input type="password" placeholder="Password" class="input-field" required>
-                <input type="password" placeholder="Re-Password" class="input-field" required>
-                <button type="submit">Sign up</button>
-            </form>
-            <p>Already have an account? <a href="#" id="openLoginFromSignup">Log in</a></p>
-        </div>
-    </div>
+
 
     <!-- Modal for Login -->
     <div id="loginModal" class="modal">
