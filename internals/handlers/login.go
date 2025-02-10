@@ -2,8 +2,11 @@ package handlers
 
 import (
 	"fmt"
-	"forum/internals/models/usermodel"
 	"net/http"
+
+	"forum/internals/auth"
+	"forum/internals/database"
+	"forum/internals/models/usermodel"
 )
 
 func LoginPageHandler(w http.ResponseWriter, r *http.Request) {
@@ -33,20 +36,33 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Received signup request")
 
 	// Retrieve form values
-	
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 
-	authenticator,err :=usermodel.AuthenticateUser(email,password)
-	if err !=nil || !authenticator{
+	authenticator, err := usermodel.AuthenticateUser(email, password)
+	if err != nil || !authenticator {
 		http.Error(w, "Error parsing form data", http.StatusNotFound)
 		fmt.Println("error authenticating user:", err)
 		return
 
 	}
 
+	newUser, err := usermodel.GetUserByEmail(email)
+	if err != nil {
+		http.Error(w, "Error creating session by user_email", http.StatusInternalServerError)
+		return
+	}
+
+	// Create session
+	session, err := usermodel.CreateSession(database.DB, newUser.ID)
+	if err != nil {
+		http.Error(w, "Error creating session", http.StatusInternalServerError)
+		return
+	}
+
+	// Set session cookie
+	auth.SetSessionCookie(w, session)
+
 	// Success response
 	w.WriteHeader(http.StatusCreated)
-	fmt.Fprintln(w, "User logged in succesfully")
-
 }
