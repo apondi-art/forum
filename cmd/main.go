@@ -44,6 +44,7 @@ func main() {
 	http.HandleFunc("/api/posts/create", handlers.HandleCreatePost)
 	http.HandleFunc("/api/categories", handlers.HandleGetCategories)
 	http.HandleFunc("/signup/process", handlers.SignUpHandlerProcess)
+	http.HandleFunc("/dashboard", handlers.DashboardHandler)
 	log.Println("Server listen on : http://localhost:8080")
 
 	if err := http.ListenAndServe(":8080", nil); err != nil {
