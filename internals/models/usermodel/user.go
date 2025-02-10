@@ -1,9 +1,12 @@
 package usermodel
 
 import (
+	"fmt"
 	"time"
 
 	"forum/internals/database"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
@@ -15,16 +18,31 @@ type User struct {
 }
 
 // Create a new user in the database
-func CreateUser(username, email, password string) (int64, error) {
-	query := `
-        INSERT INTO Users (username, email, password)
-        VALUES (?, ?, ?)
-    `
-	result, err := database.DB.Exec(query, username, email, password)
+func CreateUser(username, email, password string) (error) {
+	query:="INSERT INTO users (username, email, password) VALUES (?, ?, ?)"
+	_,err := database.DB.Exec(query, username, email, password)
 	if err != nil {
-		return 0, err
+		fmt.Printf("error inserting data %v\n", err)
+		return err
 	}
-	return result.LastInsertId()
+	return nil
+}
+func AuthenticateUser(email, password string) (bool, error) {
+	var hashedPassword string
+
+	// Fetch password hash from database
+	err := database.DB.QueryRow("SELECT password FROM users WHERE email = ?", email).Scan(&hashedPassword)
+	if err != nil {
+		return false, err // User not found
+	}
+
+	// Compare stored hashed password with the provided password
+	err = bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+	if err != nil {
+		return false, err // Incorrect password
+	}
+
+	return true, nil
 }
 
 // GetUserByID retrieves a user by ID
@@ -53,11 +71,19 @@ func GetUserByEmail(email string) (*User, error) {
 	return user, nil
 }
 
+func PasswordHashing(pasword string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(pasword), bcrypt.DefaultCost)
+	if err != nil {
+		fmt.Printf("Error occured during password hashing: %v/n", err)
+		return "", err
+	}
+	return string(bytes), nil
 
-
-
-
-
+}
+func CompareHashedPassword(password string, hashed string)bool{
+	err := bcrypt.CompareHashAndPassword([]byte(hashed), []byte(password))
+	return err==nil
+}
 
 /*Declare a struct that holds the user  login credentials*/
 

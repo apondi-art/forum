@@ -32,32 +32,6 @@ func RemoveCategoryFromPost(postID, categoryID int64) error {
 	return nil
 }
 
-// Get all categories for a post
-func GetPostCategories(postID int64) ([]Category, error) {
-	query := `
-        SELECT c.id, c.name
-        FROM Categories c
-        JOIN Post_Categories pc ON c.id = pc.category_id
-        WHERE pc.post_id = ?
-    `
-	rows, err := database.DB.Query(query, postID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var categories []Category
-	for rows.Next() {
-		var category Category
-		err := rows.Scan(&category.ID, &category.Name)
-		if err != nil {
-			return nil, err
-		}
-		categories = append(categories, category)
-	}
-	return categories, nil
-}
-
 // Get all posts for a category
 func GetCategoryPosts(categoryID int64) ([]int64, error) {
 	query := `
@@ -80,4 +54,29 @@ func GetCategoryPosts(categoryID int64) ([]int64, error) {
 		postIDs = append(postIDs, postID)
 	}
 	return postIDs, nil
+}
+
+// GetPostCategories retrieves category names for a post
+func GetPostCategories(postID int64) ([]string, error) {
+	query := `
+        SELECT c.name
+        FROM Categories c
+        JOIN Post_Categories pc ON c.id = pc.category_id
+        WHERE pc.post_id = ?
+    `
+	rows, err := database.DB.Query(query, postID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var categories []string
+	for rows.Next() {
+		var category string
+		if err := rows.Scan(&category); err != nil {
+			return nil, err
+		}
+		categories = append(categories, category)
+	}
+	return categories, nil
 }
