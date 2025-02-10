@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Homepage</title>
-    <link rel="stylesheet" href="static/css/styles.css">  
+    <link rel="stylesheet" href="static/css/styles.css">
 </head>
 <body>
     <nav class="navbar">
@@ -14,36 +14,125 @@
             <a class="login" href="/signup">Sign up</a>
         </div>
     </nav>
- 
- 
+    <!-- Modal for Signup -->
+    <div id="signupModal" class="modal">
+        <!-- ... (signup modal content) ... -->
+    </div>
+    <!-- Modal for Login -->
+    <div id="loginModal" class="modal">
+        <!-- ... (login modal content) ... -->
+    </div>
+    <!-- Modal for post creation -->
+    <div id="createPostModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="createPostCloseBtn">&times;</span>
+            <h1>Create New Post</h1>
+            <form id="createPostForm">
+                <input type="text" placeholder="Title" class="input-field" required>
+                <textarea placeholder="Content" class="input-field" required></textarea>
+                <div class="category-selection">
+                    <h3>Select Categories</h3>
+                    {{range .Categories}}
+                    <label>
+                        <input type="checkbox" name="categories" value="{{.ID}}"> {{.Name}}
+                    </label>
+                    {{end}}
+                </div>
+                <button type="submit">Create Post</button>
+            </form>
+        </div>
+    </div>
     <section class="filter-content">
         <!-- Left Section for Filters -->
         <div class="left-section">
             <h2>Filter Categories</h2>
-            <form>
+            <form id="filterForm">
+                {{range .Categories}}
                 <label>
-                    <input type="checkbox" name="category1"> Category 1
+                    <input type="checkbox" name="category" value="{{.ID}}"> {{.Name}}
                 </label>
+                {{end}}
+                {{if .IsLoggedIn}}
                 <label>
-                    <input type="checkbox" name="category2"> Category 2
+                    <input type="checkbox" name="showLiked"> Show Liked Posts
                 </label>
-                <label>
-                    <input type="checkbox" name="category3"> Category 3
-                </label>
-                <label>
-                    <input type="checkbox" name="category3"> Category 4
-                </label>
-                <label>
-                    <input type="checkbox" name="category3"> Category 5
-                </label>
+                {{end}}
                 <button type="submit">Apply Filters</button>
             </form>
         </div>
-         <!-- Right Section for Content -->
-         <div class="right-section">
-            <h3>Content Area</h3>
+        <!-- Right Section for Content -->
+        <div class="right-section">
+            {{if .IsLoggedIn}}
+            <div class="create-post">
+                <button id="createPostBtn">Create New Post</button>
+            </div>
+            {{end}}
+            
+            <div class="posts-container">
+                {{range .Posts}}
+                <div class="post-card">
+                    <h3 class="post-title">{{.Title}}</h3>
+                    <div class="post-meta">
+                        <span class="post-author">By {{.Author}}</span>
+                        <span class="post-date">{{formatDate .CreatedAt}}</span>
+                    </div>
+                    <div class="post-categories">
+                        {{range .Categories}}
+                        <span class="category-tag">{{.}}</span>
+                        {{end}}
+                    </div>
+                    <p class="post-content">{{.Content}}</p>
+                    <div class="post-actions">
+                        <div class="reaction-buttons">
+                            {{if $.IsLoggedIn}}
+                            <button class="like-btn" data-post-id="{{.ID}}">
+                                👍 <span class="like-count">{{.LikeCount}}</span>
+                            </button>
+                            <button class="dislike-btn" data-post-id="{{.ID}}">
+                                👎 <span class="dislike-count">{{.DislikeCount}}</span>
+                            </button>
+                            {{else}}
+                            <span>👍 {{.LikeCount}}</span>
+                            <span>👎 {{.DislikeCount}}</span>
+                            {{end}}
+                        </div>
+                        <button class="view-comments" data-post-id="{{.ID}}">
+                            Comments ({{len .Comments}})
+                        </button>
+                    </div>
+                    <div class="comments-section" id="comments-{{.ID}}" style="display: none;">
+                        {{range .Comments}}
+                        <div class="comment">
+                            <div class="comment-meta">
+                                <span class="comment-author">{{.Author}}</span>
+                                <span class="comment-date">{{formatDate .CreatedAt}}</span>
+                            </div>
+                            <p class="comment-content">{{.Content}}</p>
+                            {{if $.IsLoggedIn}}
+                            <div class="comment-actions">
+                                <button class="like-btn" data-comment-id="{{.ID}}">
+                                    👍 <span class="like-count">{{.LikeCount}}</span>
+                                </button>
+                                <button class="dislike-btn" data-comment-id="{{.ID}}">
+                                    👎 <span class="dislike-count">{{.DislikeCount}}</span>
+                                </button>
+                            </div>
+                            {{end}}
+                        </div>
+                        {{end}}
+                        {{if $.IsLoggedIn}}
+                        <form class="comment-form" data-post-id="{{.ID}}">
+                            <textarea placeholder="Write a comment..." required></textarea>
+                            <button type="submit">Submit</button>
+                        </form>
+                        {{end}}
+                    </div>
+                </div>
+                {{end}}
+            </div>
         </div>
     </section>
     <script src="static/js/post.js"></script>
+    <script src="static/js/postmodal.js"></script>
 </body>
 </html>
