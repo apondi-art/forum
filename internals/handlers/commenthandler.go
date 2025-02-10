@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"forum/internals/auth"
+	"forum/internals/models/categorymodel"
 	"forum/internals/models/commentmodel"
 )
 
@@ -44,4 +45,21 @@ func HandleCreateComment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(comment)
+}
+
+// HandleGetCategories returns the list of available categories
+func HandleGetCategories(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	categories, err := categorymodel.GetAllCategories()
+	if err != nil {
+		http.Error(w, "Failed to fetch categories", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(categories)
 }
