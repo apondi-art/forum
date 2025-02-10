@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"html/template"
 	"net/http"
 	"time"
@@ -65,7 +66,7 @@ func HandleCreatePost(w http.ResponseWriter, r *http.Request) {
 	// Create the post
 	postID, err := postmodel.CreatePost(userID, request.Title, request.Content, request.Categories)
 	if err != nil {
-		http.Error(w, "Failed to create post", http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("Failed to create post: %v", err), http.StatusInternalServerError)
 		return
 	}
 
@@ -76,6 +77,7 @@ func HandleCreatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(post)
 }
