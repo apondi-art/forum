@@ -7,22 +7,30 @@
     <link rel="stylesheet" href="static/css/styles.css">
 </head>
 <body>
+    <!-- Navigation Bar -->
     <nav class="navbar">
         <div class="container-md">
-            <a class="forum" href="#">FORUM</a>
-            <a class="login" href="/login">Log in</a>
-            <a class="login" href="/signup">Sign up</a>
+            <a class="forum" href="/">FORUM</a>
+            {{if .IsLoggedIn}}
+                <a class="login" href="/logout">Logout</a>
+            {{else}}
+                <a class="login" href="/login">Log in</a>
+                <a class="login" href="/signup">Sign up</a>
+            {{end}}
         </div>
     </nav>
+
     <!-- Modal for Signup -->
     <div id="signupModal" class="modal">
         <!-- ... (signup modal content) ... -->
     </div>
+    
     <!-- Modal for Login -->
     <div id="loginModal" class="modal">
         <!-- ... (login modal content) ... -->
     </div>
-    <!-- Modal for post creation -->
+
+    <!-- Modal for Post Creation -->
     <div id="createPostModal" class="modal">
         <div class="modal-content">
             <span class="close" id="createPostCloseBtn">&times;</span>
@@ -42,6 +50,8 @@
             </form>
         </div>
     </div>
+
+    <!-- Main Content -->
     <section class="filter-content">
         <!-- Left Section for Filters -->
         <div class="left-section">
@@ -60,7 +70,8 @@
                 <button type="submit">Apply Filters</button>
             </form>
         </div>
-        <!-- Right Section for Content -->
+
+        <!-- Right Section for Posts -->
         <div class="right-section">
             {{if .IsLoggedIn}}
             <div class="create-post">
@@ -82,24 +93,28 @@
                         {{end}}
                     </div>
                     <p class="post-content">{{.Content}}</p>
+
+                    <!-- Reaction Buttons -->
                     <div class="post-actions">
                         <div class="reaction-buttons">
                             {{if $.IsLoggedIn}}
-                            <button class="like-btn" data-post-id="{{.ID}}">
-                                👍 <span class="like-count">{{.LikeCount}}</span>
-                            </button>
-                            <button class="dislike-btn" data-post-id="{{.ID}}">
-                                👎 <span class="dislike-count">{{.DislikeCount}}</span>
-                            </button>
+                                <button class="like-btn" data-post-id="{{.ID}}">
+                                    👍 <span class="like-count">{{.LikeCount}}</span>
+                                </button>
+                                <button class="dislike-btn" data-post-id="{{.ID}}">
+                                    👎 <span class="dislike-count">{{.DislikeCount}}</span>
+                                </button>
                             {{else}}
-                            <span>👍 {{.LikeCount}}</span>
-                            <span>👎 {{.DislikeCount}}</span>
+                                <span>👍 {{.LikeCount}}</span>
+                                <span>👎 {{.DislikeCount}}</span>
                             {{end}}
                         </div>
                         <button class="view-comments" data-post-id="{{.ID}}">
                             Comments ({{len .Comments}})
                         </button>
                     </div>
+
+                    <!-- Comments Section -->
                     <div class="comments-section" id="comments-{{.ID}}" style="display: none;">
                         {{range .Comments}}
                         <div class="comment">
@@ -120,11 +135,15 @@
                             {{end}}
                         </div>
                         {{end}}
+
+                        <!-- Comment Form -->
                         {{if $.IsLoggedIn}}
-                        <form class="comment-form" data-post-id="{{.ID}}">
-                            <textarea placeholder="Write a comment..." required></textarea>
-                            <button type="submit">Submit</button>
-                        </form>
+                            <form class="comment-form" data-post-id="{{.ID}}">
+                                <textarea placeholder="Write a comment..." required></textarea>
+                                <button type="submit">Submit</button>
+                            </form>
+                        {{else}}
+                            <p><a href="/login">Log in</a> to comment.</p>
                         {{end}}
                     </div>
                 </div>
@@ -132,19 +151,19 @@
             </div>
         </div>
     </section>
+
+    <!-- Scripts -->
     <script src="static/js/post.js"></script>
     <script src="static/js/postmodal.js"></script>
     <script src="static/js/comment.js"></script>
 </body>
 </html>
 
-
+<!-- Styles -->
 <style>
-  
   .comment-form textarea {
     width: 60%; 
     height: 150px; 
     resize: both; 
-
-}
+  }
 </style>
