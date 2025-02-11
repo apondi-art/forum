@@ -93,20 +93,20 @@
         <h2>Let's sign up.</h2>
         <p>Welcome to The Forum Platform!</p>
 
-        <form action="/signup/process" method="POST">
+        <form action="/signup" method="POST">
             <input type="text" placeholder="Username" name="username"  class="input-field" required>
             <input type="email" placeholder="Your email"  name="email" class="input-field"  required>
 
             <div class="password-wrapper">
-                <input type="text" placeholder="Password"  name="password" class="input-field"  required>
+                <input type="password" placeholder="Password"  name="password" class="input-field"  required>
                 <span class="icon">🔒</span>
             </div>
             <div class="password-wrapper">
-                <input type="text" placeholder="Re-Password"  name="confirm_pass" class="input-field" required>
+                <input type="password" placeholder="Re-Password"  name="confirm_pass" class="input-field" required>
                 <span class="icon">🔒</span>
             </div>
 
-            <p class="login-text">Have an account? <a href="login" class="login-link">Log in</a></p>
+            <p class="login-text">Have an account? <a href="/login" class="login-link">Log in</a></p>
 
             <button type="submit" id="signup-button">Next</button>
         </form>
