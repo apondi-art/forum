@@ -43,14 +43,12 @@ func main() {
 	}()
 
 	http.HandleFunc("/", handlers.Homepage)
-	http.HandleFunc("/login", handlers.LoginPageHandler)
-	http.HandleFunc("/signup", handlers.SignupPageHandler)
+	http.HandleFunc("/login", handlers.LoginHandler)
+	http.HandleFunc("/signup", handlers.SignUpHandler)
 	http.HandleFunc("/api/reaction", handlers.HandleReaction)
-	http.HandleFunc("/login/dashboard", handlers.LoginHandler)
 	http.HandleFunc("/api/comment", handlers.HandleCreateComment)
 	http.HandleFunc("/api/posts/create", handlers.HandleCreatePost)
 	http.HandleFunc("/api/categories", handlers.HandleGetCategories)
-	http.HandleFunc("/signup/process", handlers.SignUpHandlerProcess)
 	http.HandleFunc("/dashboard", handlers.DashboardHandler)
 	log.Println("Server listen on : http://localhost:8080")
 
