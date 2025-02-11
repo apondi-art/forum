@@ -11,7 +11,7 @@ import (
 
 // GetUserFromSession extracts user information from the session cookie
 func GetUserFromSession(r *http.Request) (userID int64, isLoggedIn bool) {
-	cookie, err := r.Cookie("session_id")
+	cookie, err := r.Cookie("session_token")
 	if err != nil {
 		return 0, false
 	}
