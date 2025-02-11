@@ -72,3 +72,33 @@ func AddCategoriesToPost(tx *sql.Tx, postID int64, categoryIDs []int64) error {
 	}
 	return nil
 }
+
+// SeedCategories inserts default categories if they don't exist
+func SeedCategories() error {
+	var count int
+	err := database.DB.QueryRow(`SELECT COUNT(*) FROM Categories`).Scan(&count)
+	if err != nil {
+		return fmt.Errorf("failed to check categories count: %v", err)
+	}
+
+	if count == 0 { // If no categories exist, insert defaults
+		tx, err := database.DB.Begin()
+		if err != nil {
+			return fmt.Errorf("failed to begin transaction: %v", err)
+		}
+		defer tx.Rollback()
+
+		query := `INSERT INTO Categories (id, name) VALUES (?, ?)`
+		for _, category := range DefaultCategories {
+			_, err := tx.Exec(query, category.ID, category.Name)
+			if err != nil {
+				return fmt.Errorf("failed to insert category %s: %v", category.Name, err)
+			}
+		}
+
+		if err = tx.Commit(); err != nil {
+			return fmt.Errorf("failed to commit transaction: %v", err)
+		}
+	}
+	return nil
+}

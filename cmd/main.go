@@ -10,6 +10,7 @@ import (
 	"forum/internals/auth"
 	"forum/internals/database"
 	"forum/internals/handlers"
+	"forum/internals/models/categorymodel"
 )
 
 func main() {
@@ -23,6 +24,12 @@ func main() {
 
 	if err := database.InitDB(); err != nil {
 		log.Fatalf("Failed to initialize database: %v", err)
+	}
+
+	// Seed default categories
+	err := categorymodel.SeedCategories()
+	if err != nil {
+		log.Fatalf("Failed to seed categories: %v", err)
 	}
 
 	// Start a goroutine to clean up expired sessions periodically
