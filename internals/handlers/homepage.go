@@ -4,8 +4,6 @@ import (
 	"database/sql"
 	"html/template"
 	"net/http"
-	"strconv"
-
 	"forum/internals/auth"
 	"forum/internals/models/categorymodel"
 	"forum/internals/models/postmodel"
@@ -29,45 +27,19 @@ func Homepage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Parse filter parameters
-	var selectedCategories []int64
-	var showLiked bool
-
-	if r.Method == "POST" {
-		if err := r.ParseForm(); err != nil {
-			http.Error(w, "Failed to parse form", http.StatusBadRequest)
-			return
-		}
-
-		for _, catID := range r.Form["category"] {
-			id, err := strconv.ParseInt(catID, 10, 64)
-			if err == nil {
-				selectedCategories = append(selectedCategories, id)
-			}
-		}
-
-		showLiked = r.Form.Get("showLiked") == "on"
-	}
-
-	// Get filtered posts
+	// Display different content based on login status
 	var posts []viewmodel.PostView
 	var err error
-
-	if len(selectedCategories) > 0 {
-		for _, catID := range selectedCategories {
-			categoryPosts, err := postmodel.GetFilteredPosts(userID, sql.NullInt64{Int64: catID, Valid: true}, showLiked)
-			if err != nil {
-				http.Error(w, "Failed to load posts", http.StatusInternalServerError)
-				return
-			}
-			posts = append(posts, categoryPosts...)
-		}
+	if isLoggedIn {
+		// Fetch posts normally for logged-in users
+		posts, err = postmodel.GetFilteredPosts(userID, sql.NullInt64{Valid: false}, false)
 	} else {
-		posts, err = postmodel.GetFilteredPosts(userID, sql.NullInt64{Valid: false}, showLiked)
-		if err != nil {
-			http.Error(w, "Failed to load posts", http.StatusInternalServerError)
-			return
-		}
+		// Fetch only public posts by passing a special filter (e.g., userID = 0 or -1)
+		posts, err = postmodel.GetFilteredPosts(0, sql.NullInt64{Valid: false}, false)
+	}
+	if err != nil {
+		http.Error(w, "Failed to load posts", http.StatusInternalServerError)
+		return
 	}
 
 	// Prepare template data

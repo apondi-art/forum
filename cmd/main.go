@@ -49,7 +49,7 @@ func main() {
 	http.HandleFunc("/api/comment", handlers.HandleCreateComment)
 	http.HandleFunc("/api/posts/create", handlers.HandleCreatePost)
 	http.HandleFunc("/api/categories", handlers.HandleGetCategories)
-	http.HandleFunc("/dashboard", handlers.DashboardHandler)
+	http.HandleFunc("/logout", handlers.LogoutHandler)
 	log.Println("Server listen on : http://localhost:8080")
 
 	if err := http.ListenAndServe(":8080", nil); err != nil {
