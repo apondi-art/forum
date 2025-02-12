@@ -56,10 +56,10 @@
         <!-- Left Section for Filters -->
         <div class="left-section">
             <h2>Filter Categories</h2>
-            <form id="filterForm">
+            <form id="filterForm" action="/" method="GET">
                 {{range .Categories}}
                 <label>
-                    <input type="checkbox" name="category" value="{{.ID}}"> {{.Name}}
+                    <input type="checkbox" name="categories" value="{{.ID}}"> {{.Name}}
                 </label>
                 {{end}}
                 {{if .IsLoggedIn}}
