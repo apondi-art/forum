@@ -2,6 +2,7 @@ package categorymodel
 
 import (
 	"fmt"
+	"strings"
 
 	"forum/internals/database"
 )
@@ -79,4 +80,41 @@ func GetPostCategories(postID int64) ([]string, error) {
 		categories = append(categories, category)
 	}
 	return categories, nil
+}
+
+// GetPostsByCategories retrieves posts that belong to the specified categories
+func GetPostsByCategories(categoryIDs []int64) ([]int64, error) {
+	if len(categoryIDs) == 0 {
+		return nil, fmt.Errorf("no category IDs provided")
+	}
+
+	placeholders := strings.Repeat("?,", len(categoryIDs))
+	placeholders = placeholders[:len(placeholders)-1] // Remove trailing comma
+
+	query := fmt.Sprintf(`
+        SELECT DISTINCT post_id
+        FROM Post_Categories
+        WHERE category_id IN (%s)
+    `, placeholders)
+
+	args := make([]interface{}, len(categoryIDs))
+	for i, id := range categoryIDs {
+		args[i] = id
+	}
+
+	rows, err := database.DB.Query(query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var postIDs []int64
+	for rows.Next() {
+		var postID int64
+		if err := rows.Scan(&postID); err != nil {
+			return nil, err
+		}
+		postIDs = append(postIDs, postID)
+	}
+	return postIDs, nil
 }
