@@ -68,3 +68,9 @@ func CleanupExpiredSessions(db *sql.DB) error {
 	_, err := db.Exec(query)
 	return err
 }
+
+func DeleteSession(db *sql.DB, sessionID string) error {
+	query := "DELETE FROM sessions WHERE id = ?"
+	_, err := db.Exec(query, sessionID)
+	return err
+}
