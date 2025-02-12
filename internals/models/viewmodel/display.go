@@ -16,6 +16,7 @@ type PostView struct {
 	Author       string
 	CreatedAt    time.Time
 	UpdatedAt    sql.NullTime
+	Username     string
 	Categories   []string
 	LikeCount    int
 	DislikeCount int
