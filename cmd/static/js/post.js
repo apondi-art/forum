@@ -1,4 +1,3 @@
-
 // Get modal elements
 const signupModal = document.getElementById("signupModal");
 const loginModal = document.getElementById("loginModal");
@@ -75,4 +74,20 @@ loginForm.addEventListener("submit", function(event) {
 
     // Redirect to homepage after login
     window.location.href = "index.html"; // Replace with your actual homepage URL
+});
+
+// Handle filter form submission
+document.getElementById("filterForm").addEventListener("submit", function(event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    const form = event.target;
+    const formData = new FormData(form);
+    const params = new URLSearchParams();
+
+    formData.forEach((value, key) => {
+        params.append(key, value);
+    });
+
+    // Redirect to the URL with query parameters
+    window.location.href = `/?${params.toString()}`;
 });
