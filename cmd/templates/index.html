@@ -11,12 +11,22 @@
     <nav class="navbar">
         <div class="container-md">
             <a class="forum" href="/">FORUM</a>
-            {{if .IsLoggedIn}}
-                <a class="login" href="/logout">Logout</a>
-            {{else}}
-                <a class="login" href="/login">Log in</a>
-                <a class="login" href="/signup">Sign up</a>
-            {{end}}
+            <div class="nav-right">
+                {{if .IsLoggedIn}}
+                    <div class="dropdown">
+                        <button class="dropbtn">
+                            <img src="static/images/user.png" alt="User Icon" class="user-icon">
+                        </button>
+                        <div class="dropdown-content">
+                            <span>{{.UserName}}</span>
+                            <a href="/logout">Logout</a>
+                        </div>
+                    </div>
+                {{else}}
+                    <a class="login" href="/login">Log in</a>
+                    <a class="signup" href="/signup">Sign up</a>
+                {{end}}
+            </div>
         </div>
     </nav>
 
@@ -79,7 +89,7 @@
             </div>
             {{end}}
             
-            <div class="posts-container">
+            <div class="posts-container scrollable">
                 {{range .Posts}}
                 <div class="post-card">
                     <h3 class="post-title">{{.Title}}</h3>
@@ -166,4 +176,62 @@
     height: 150px; 
     resize: both; 
   }
+  .scrollable {
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  .dropbtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  .user-icon {
+    margin-right: 20px;
+    margin-top: 17px;
+    width: 50px;
+    height: 50px;
+  }
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+  }
+  .dropdown-content a, .dropdown-content span {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+  }
+  .dropdown-content a:hover {
+    background-color: #f1f1f1;
+  }
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+  .nav-right {
+    float: right;
+  }
+  .login, .signup {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-top: 30px;
+    margin-right: 30px; /* Add this line to create space between buttons */
+    border-radius: 25px;
+    background-color: #D34500;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+  }
+  .login:hover, .signup:hover {
+    background-color: #ce5b22bd;
+  }
 </style>
+   

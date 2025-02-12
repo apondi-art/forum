@@ -18,6 +18,7 @@ type PageData struct {
 	Categories []categorymodel.Category
 	IsLoggedIn bool
 	UserID     int64
+	UserName   string
 }
 
 // Template functions map

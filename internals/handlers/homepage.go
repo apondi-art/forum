@@ -23,6 +23,10 @@ func Homepage(w http.ResponseWriter, r *http.Request) {
 
 	// Get user session info
 	userID, isLoggedIn := auth.GetUserFromSession(r)
+	var userName string
+	if isLoggedIn {
+		userName, _ = auth.GetUserNameByID(userID)
+	}
 
 	// Get categories for filter
 	categories, err1 := categorymodel.GetAllCategories()
@@ -31,12 +35,8 @@ func Homepage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Log raw query parameters
-	// log.Printf("Raw query parameters: %v", r.URL.RawQuery) // Add this line
-
 	// Parse category filter from query parameters
 	categoryFilter := r.URL.Query().Get("categories")
-	// log.Printf("Category filter string: %s", categoryFilter) // Add this line
 
 	var categoryIDs []int64
 	if categoryFilter != "" {
@@ -46,12 +46,10 @@ func Homepage(w http.ResponseWriter, r *http.Request) {
 			if err == nil {
 				categoryIDs = append(categoryIDs, categoryID)
 			} else {
-				log.Printf("Error parsing category ID: %v", err) // Add this line
+				log.Printf("Error parsing category ID: %v", err)
 			}
 		}
 	}
-
-	// log.Printf("Parsed category IDs: %v", categoryIDs) // Add this line
 
 	// Display different content based on login status
 	var posts []viewmodel.PostView
@@ -63,8 +61,6 @@ func Homepage(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Failed to load posts", http.StatusInternalServerError)
 			return
 		}
-
-		// log.Printf("Filtered post IDs: %v", postIDs) // Add this line
 
 		posts, err = postmodel.GetPostsByIDs(postIDs)
 	} else {
@@ -87,6 +83,7 @@ func Homepage(w http.ResponseWriter, r *http.Request) {
 		Categories: categories,
 		IsLoggedIn: isLoggedIn,
 		UserID:     userID,
+		UserName:   userName,
 	}
 
 	// Parse and execute template

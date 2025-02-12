@@ -25,7 +25,7 @@ body {
     text-decoration: none;
 }
 
-.navbar .login {
+.navbar .login .signup {
     margin-right: 10%;
     font-family: roboto;
     font-size: 16px;
