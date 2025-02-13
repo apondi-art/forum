@@ -18,15 +18,16 @@ type User struct {
 }
 
 // Create a new user in the database
-func CreateUser(username, email, password string) (error) {
-	query:="INSERT INTO users (username, email, password) VALUES (?, ?, ?)"
-	_,err := database.DB.Exec(query, username, email, password)
+func CreateUser(username, email, password string) error {
+	query := "INSERT INTO users (username, email, password) VALUES (?, ?, ?)"
+	_, err := database.DB.Exec(query, username, email, password)
 	if err != nil {
 		fmt.Printf("error inserting data %v\n", err)
 		return err
 	}
 	return nil
 }
+
 func AuthenticateUser(email, password string) (bool, error) {
 	var hashedPassword string
 
@@ -78,11 +79,11 @@ func PasswordHashing(pasword string) (string, error) {
 		return "", err
 	}
 	return string(bytes), nil
-
 }
-func CompareHashedPassword(password string, hashed string)bool{
+
+func CompareHashedPassword(password string, hashed string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hashed), []byte(password))
-	return err==nil
+	return err == nil
 }
 
 /*Declare a struct that holds the user  login credentials*/

@@ -9,16 +9,6 @@ import (
 	"forum/internals/models/usermodel"
 )
 
-// func LoginPageHandler(w http.ResponseWriter, r *http.Request) {
-// 	if r.Method != http.MethodGet {
-// 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-// 		return
-// 	}
-
-// 	// Serve the signup page (ensure "signup.html" exists inside "templates/")
-// 	http.ServeFile(w, r, "templates/login.html")
-// }
-
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		temp, err := template.ParseFiles("templates/login.html")
@@ -75,4 +65,3 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 }
-

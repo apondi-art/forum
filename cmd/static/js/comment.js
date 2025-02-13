@@ -57,7 +57,6 @@ document.addEventListener('submit', async (e) => {
                 </div>
             `;
             commentsSection.insertAdjacentHTML('afterbegin', commentHTML);
-            
             // Clear the form
             form.querySelector('textarea').value = '';
         } catch (error) {

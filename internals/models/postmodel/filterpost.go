@@ -2,6 +2,7 @@ package postmodel
 
 import (
 	"database/sql"
+	"fmt"
 
 	"forum/internals/database"
 	"forum/internals/models/categorymodel"
@@ -40,6 +41,7 @@ func GetPostsByCategory(categoryID int64) ([]Post, error) {
 
 // GetFilteredPosts retrieves posts based on various filters
 func GetFilteredPosts(userID int64, categoryID sql.NullInt64, showLiked bool) ([]viewmodel.PostView, error) {
+	fmt.Println("hello")
 	query := `
         SELECT DISTINCT p.id, p.title, p.content, u.username, p.created_at, p.updated_at
         FROM Posts p

@@ -129,6 +129,5 @@ func GetPostComments(postID int64) ([]CommentView, error) {
 
 		comments = append(comments, comment)
 	}
-
 	return comments, nil
 }
