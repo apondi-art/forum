@@ -72,10 +72,6 @@ func Homepage(w http.ResponseWriter, r *http.Request) {
 			posts, err = postmodel.GetFilteredPosts(0, sql.NullInt64{Valid: false}, false)
 		}
 	}
-	if err != nil {
-		http.Error(w, "Failed to load posts", http.StatusInternalServerError)
-		return
-	}
 
 	for i, post := range posts {
 		comments, err := viewmodel.GetPostComments(post.ID)
