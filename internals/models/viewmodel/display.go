@@ -126,7 +126,6 @@ func GetPostComments(postID int64) ([]CommentView, error) {
 		}
 		comment.LikeCount = likes
 		comment.DislikeCount = dislikes
-
 		comments = append(comments, comment)
 	}
 	return comments, nil
