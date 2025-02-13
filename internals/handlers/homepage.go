@@ -77,6 +77,15 @@ func Homepage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	for i, post := range posts {
+		comments, err := viewmodel.GetPostComments(post.ID)
+		if err != nil {
+			http.Error(w, "Error fetching comments", http.StatusInternalServerError)
+			return
+		}
+		posts[i].Comments = comments
+	}
+
 	// Prepare template data
 	data := PageData{
 		Posts:      posts,

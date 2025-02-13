@@ -11,10 +11,10 @@ import (
 
 // HandleCreateComment processes new comment submissions
 func HandleCreateComment(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
+	// if r.Method != "POST" {
+	// 	http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	// 	return
+	// }
 
 	userID, isLoggedIn := auth.GetUserFromSession(r)
 	if !isLoggedIn {

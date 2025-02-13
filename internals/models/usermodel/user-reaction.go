@@ -39,7 +39,7 @@ func GetReactionCounts(postID int64) (likes int, dislikes int, error error) {
 	query := `
         SELECT reaction_type, COUNT(*) 
         FROM Likes_Dislikes 
-        WHERE post_id = ? 
+        WHERE post_id = ? AND comment_id IS NULL
         GROUP BY reaction_type
     `
 	rows, err := database.DB.Query(query, postID)
@@ -68,7 +68,7 @@ func GetCommentReactionCounts(commentID int64) (likes int, dislikes int, err err
 	query := `
         SELECT reaction_type, COUNT(*) 
         FROM Likes_Dislikes 
-        WHERE comment_id = ? 
+        WHERE comment_id = ? AND post_id IS NULL
         GROUP BY reaction_type
     `
 	rows, err := database.DB.Query(query, commentID)

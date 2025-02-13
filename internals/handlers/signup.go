@@ -9,16 +9,6 @@ import (
 	"forum/internals/models/usermodel"
 )
 
-// func SignupPageHandler(w http.ResponseWriter, r *http.Request) {
-// 	if r.Method != http.MethodGet {
-// 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-// 		return
-// 	}
-
-// 	// Serve the signup page (ensure "signup.html" exists inside "templates/")
-// 	http.ServeFile(w, r, "templates/signup.html")
-// }
-
 func SignUpHandler(w http.ResponseWriter, r *http.Request) {
 	// Ensure it's a POST request
 	if r.Method == http.MethodGet {
@@ -37,8 +27,6 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("Error parsing form:", err)
 			return
 		}
-
-		
 
 		// Retrieve form values
 		username := r.FormValue("username")

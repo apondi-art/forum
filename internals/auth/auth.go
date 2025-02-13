@@ -3,6 +3,7 @@ package auth
 import (
 	"database/sql"
 	"errors"
+
 	"forum/internals/database"
 )
 
