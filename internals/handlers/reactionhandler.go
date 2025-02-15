@@ -33,13 +33,13 @@ func HandleReaction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Return updated counts
-	var likes, dislikes int
+	var counts usermodel.ReactionCounts
 	var err error
 	switch request.TargetType {
 	case "post":
-		likes, dislikes, err = usermodel.HandlePostReaction(userID, request.TargetID, request.Type)
+		counts, err = usermodel.HandlePostReaction(userID, request.TargetID, request.Type)
 	case "comment":
-		likes, dislikes, err = usermodel.HandleCommentReaction(userID, request.TargetID, request.Type)
+		counts, err = usermodel.HandleCommentReaction(userID, request.TargetID, request.Type)
 	default:
 		http.Error(w, "Invalid target type", http.StatusBadRequest)
 		return
@@ -50,9 +50,10 @@ func HandleReaction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Send response
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]int{
-		"likes":    likes,
-		"dislikes": dislikes,
+		"likes":    counts.Likes,
+		"dislikes": counts.Dislikes,
 	})
 }
