@@ -83,3 +83,20 @@ func updateReaction(userID int64, postID, commentID sql.NullInt64, existingReact
     `, userID, postID, commentID, newReaction)
 	return err
 }
+
+// getUpdatedCounts retrieves the current reaction counts
+func getUpdatedCounts(postID, commentID sql.NullInt64) (ReactionCounts, error) {
+	var counts ReactionCounts
+	err := database.DB.QueryRow(`
+        SELECT
+            COALESCE(SUM(CASE WHEN reaction_type = 'like' THEN 1 ELSE 0 END), 0) AS likes,
+            COALESCE(SUM(CASE WHEN reaction_type = 'dislike' THEN 1 ELSE 0 END), 0) AS dislikes
+        FROM likes_dislikes
+        WHERE (post_id = ? OR comment_id = ?)
+    `, postID, commentID).Scan(&counts.Likes, &counts.Dislikes)
+	if err != nil {
+		return counts, fmt.Errorf("failed to get updated counts: %v", err)
+	}
+
+	return counts, nil
+}
