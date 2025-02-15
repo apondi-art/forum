@@ -108,10 +108,10 @@
                     <div class="post-actions">
                         <div class="reaction-buttons">
                             {{if $.IsLoggedIn}}
-                                <button class="like-btn" data-post-id="{{.ID}}">
+                                <button class="like-btn" data-target-type="post" data-target-id="{{.ID}}">
                                     👍 <span class="like-count">{{.LikeCount}}</span>
                                 </button>
-                                <button class="dislike-btn" data-post-id="{{.ID}}">
+                                <button class="dislike-btn" data-target-type="post" data-target-id="{{.ID}}">
                                     👎 <span class="dislike-count">{{.DislikeCount}}</span>
                                 </button>
                             {{else}}
@@ -135,10 +135,10 @@
                             <p class="comment-content">{{.Content}}</p>
                             {{if $.IsLoggedIn}}
                             <div class="comment-actions">
-                                <button class="like-btn" data-comment-id="{{.ID}}">
+                                <button class="like-btn" data-target-type="comment" data-target-id="{{.ID}}">
                                     👍 <span class="like-count">{{.LikeCount}}</span>
                                 </button>
-                                <button class="dislike-btn" data-comment-id="{{.ID}}">
+                                <button class="dislike-btn" data-target-type="comment" data-target-id="{{.ID}}">
                                     👎 <span class="dislike-count">{{.DislikeCount}}</span>
                                 </button>
                             </div>
@@ -166,6 +166,7 @@
     <script src="static/js/post.js"></script>
     <script src="static/js/postmodal.js"></script>
     <script src="static/js/comment.js"></script>
+    <script src="static/js/reaction.js"></script>
 </body>
 </html>
 
