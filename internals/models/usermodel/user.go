@@ -75,7 +75,7 @@ func GetUserByEmail(email string) (*User, error) {
 func PasswordHashing(pasword string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(pasword), bcrypt.DefaultCost)
 	if err != nil {
-		fmt.Printf("Error occured during password hashing: %v/n", err)
+		fmt.Printf("Error occured during password hashing: %v\n", err)
 		return "", err
 	}
 	return string(bytes), nil
