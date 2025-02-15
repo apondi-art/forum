@@ -33,8 +33,7 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
 		email := r.FormValue("email")
 		password := r.FormValue("password")
 		confirmPass := r.FormValue("confirm_pass")
-		fmt.Println("Received signup request",username,email,password)
-
+		
 
 		// Validate password match
 		if password != confirmPass {
@@ -49,7 +48,7 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("Error hashing password:", err)
 			return
 		}
-		fmt.Println(username, email, hashedPassword)
+		
 		// Store user in the database
 		if err := usermodel.CreateUser(username, email, hashedPassword); err != nil {
 			http.Error(w, "Failed to create user", http.StatusInternalServerError)
@@ -57,9 +56,8 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-	// Redirect user to the dashboard after successful signup
-	http.Redirect(w, r, "/login", http.StatusSeeOther)
+		// Redirect user to the login after successful signup
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
 
 	}
-
 }
