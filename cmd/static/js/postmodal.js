@@ -23,7 +23,7 @@ window.addEventListener('click', (e) => {
 
 // Handle post creation
 createPostForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+    // e.preventDefault();
 
     const title = createPostForm.querySelector('input[type="text"]').value;
     const content = createPostForm.querySelector('textarea').value;
