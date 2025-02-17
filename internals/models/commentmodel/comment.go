@@ -50,7 +50,7 @@ func UpdateComment(commentID int64, content string) error {
 	return nil
 }
 
-// DeleteComment removes a comment from the database
+//DeleteComment removes a comment from the database
 func DeleteComment(commentID int64) error {
 	query := `DELETE FROM Comments WHERE id = ?`
 	result, err := database.DB.Exec(query, commentID)
