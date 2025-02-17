@@ -258,6 +258,30 @@
         .category-btn.active:hover {
             background: #0056b3;
         }
+
+        .category-separator {
+            height: 1px;
+            background: #ddd;
+            margin: 10px 0;
+        }
+
+        .liked-posts-btn {
+            background: #f8f9fa;
+            border-color: #e9ecef;
+        }
+
+        .liked-posts-btn.active {
+            background: #28a745;
+            border-color: #28a745;
+        }
+
+        .liked-posts-btn:hover {
+            background: #e9ecef;
+        }
+
+        .liked-posts-btn.active:hover {
+            background: #218838;
+        }
     </style>
 
 </head>
@@ -319,19 +343,30 @@
 
     <!-- Main Content -->
     <section class="filter-content">
-        <!-- Left Section for Filters -->
+        <!-- Left Section for Categories -->
         <div class="left-section">
-            <h2>Filter Categories</h2>
+            <h2>Categories</h2>
             <div class="category-buttons">
-                <a href="/" class="category-btn {{if eq .ActiveCategory 0}}active{{end}}">All Posts</a>
+                <a href="/" class="category-btn {{if and (eq .ActiveCategory 0) (not .ShowingLiked)}}active{{end}}">
+                    All Posts
+                </a>
                 {{range .Categories}}
                 <a href="/?category={{.ID}}"
-                    class="category-btn {{if eq $.ActiveCategory .ID}}active{{end}}">{{.Name}}</a>
+                    class="category-btn {{if and (eq $.ActiveCategory .ID) (not $.ShowingLiked)}}active{{end}}">
+                    {{.Name}}
+                </a>
+                {{end}}
+
+                {{if .IsLoggedIn}}
+                <div class="category-separator"></div>
+                <a href="/?liked=true" class="category-btn liked-posts-btn {{if .ShowingLiked}}active{{end}}">
+                    My Liked Posts
+                </a>
                 {{end}}
             </div>
+        </div>
 
-
-            <!-- <form id="filterForm" action="/" method="GET">
+        <!-- <form id="filterForm" action="/" method="GET">
                 {{range .Categories}}
                 <label>
                     <input type="checkbox" name="categories" value="{{.ID}}"> {{.Name}}
