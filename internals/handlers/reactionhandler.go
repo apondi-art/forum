@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"database/sql"
 	"encoding/json"
 	"net/http"
 
@@ -23,9 +22,9 @@ func HandleReaction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var request struct {
-		PostID    *int64 `json:"postId"`
-		CommentID *int64 `json:"commentId"`
-		Type      string `json:"type"` // "like" or "dislike"
+		TargetID   int64  `json:"targetId"`   // ID of post or comment
+		TargetType string `json:"targetType"` // "post" or "comment"
+		Type       string `json:"type"`       // "like" or "dislike"
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -33,26 +32,17 @@ func HandleReaction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var postID, commentID sql.NullInt64
-	if request.PostID != nil {
-		postID = sql.NullInt64{Int64: *request.PostID, Valid: true}
-	}
-	if request.CommentID != nil {
-		commentID = sql.NullInt64{Int64: *request.CommentID, Valid: true}
-	}
-
-	if err := usermodel.AddReaction(userID, postID, commentID, request.Type); err != nil {
-		http.Error(w, "Failed to add reaction", http.StatusInternalServerError)
-		return
-	}
-
 	// Return updated counts
-	var likes, dislikes int
+	var counts usermodel.ReactionCounts
 	var err error
-	if postID.Valid {
-		likes, dislikes, err = usermodel.GetReactionCounts(postID.Int64)
-	} else {
-		likes, dislikes, err = usermodel.GetCommentReactionCounts(commentID.Int64)
+	switch request.TargetType {
+	case "post":
+		counts, err = usermodel.HandlePostReaction(userID, request.TargetID, request.Type)
+	case "comment":
+		counts, err = usermodel.HandleCommentReaction(userID, request.TargetID, request.Type)
+	default:
+		http.Error(w, "Invalid target type", http.StatusBadRequest)
+		return
 	}
 
 	if err != nil {
@@ -60,8 +50,10 @@ func HandleReaction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Send response
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]int{
-		"likes":    likes,
-		"dislikes": dislikes,
+		"likes":    counts.Likes,
+		"dislikes": counts.Dislikes,
 	})
 }
