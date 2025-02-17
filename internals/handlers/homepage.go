@@ -1,17 +1,12 @@
 package handlers
 
 import (
-	"database/sql"
 	"html/template"
-	"log"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"forum/internals/auth"
 	"forum/internals/models/categorymodel"
-	"forum/internals/models/postmodel"
-	"forum/internals/models/viewmodel"
 )
 
 // Homepage handles the main page
@@ -28,67 +23,43 @@ func Homepage(w http.ResponseWriter, r *http.Request) {
 		userName, _ = auth.GetUserNameByID(userID)
 	}
 
-	// Get categories for filter
-	categories, err1 := categorymodel.GetAllCategories()
-	if err1 != nil {
+	// Get all categories for the sidebar
+	categories, err := categorymodel.GetAllCategories()
+	if err != nil {
 		http.Error(w, "Failed to load categories", http.StatusInternalServerError)
 		return
 	}
 
-	// Parse category filter from query parameters
-	categoryFilter := r.URL.Query().Get("categories")
-
-	var categoryIDs []int64
-	if categoryFilter != "" {
-		categoryStrs := strings.Split(categoryFilter, ",")
-		for _, categoryStr := range categoryStrs {
-			categoryID, err := strconv.ParseInt(categoryStr, 10, 64)
-			if err == nil {
-				categoryIDs = append(categoryIDs, categoryID)
-			} else {
-				log.Printf("Error parsing category ID: %v", err)
-			}
+	// Get category ID from query parameter
+	categoryIDStr := r.URL.Query().Get("category")
+	var categoryID int64
+	if categoryIDStr != "" {
+		categoryID, err = strconv.ParseInt(categoryIDStr, 10, 64)
+		if err != nil {
+			http.Error(w, "Invalid category ID", http.StatusBadRequest)
+			return
 		}
 	}
 
-	// Display different content based on login status
-	var posts []viewmodel.PostView
-	var err error
-	if len(categoryIDs) > 0 {
-		// Fetch posts filtered by categories
-		postIDs, err := categorymodel.GetPostsByCategories(categoryIDs)
-		if err != nil {
-			http.Error(w, "Failed to load posts", http.StatusInternalServerError)
-			return
-		}
+	// Check if showing liked posts
+	showLiked := r.URL.Query().Get("liked") == "true"
 
-		posts, err = postmodel.GetPostsByIDs(postIDs)
-	} else {
-		if isLoggedIn {
-			// Fetch posts normally for logged-in users
-			posts, err = postmodel.GetFilteredPosts(userID, sql.NullInt64{Valid: false}, false)
-		} else {
-			// Fetch only public posts by passing a special filter (e.g., userID = 0 or -1)
-			posts, err = postmodel.GetFilteredPosts(0, sql.NullInt64{Valid: false}, false)
-		}
-	}
-
-	for i, post := range posts {
-		comments, err := viewmodel.GetPostComments(post.ID)
-		if err != nil {
-			http.Error(w, "Error fetching comments", http.StatusInternalServerError)
-			return
-		}
-		posts[i].Comments = comments
+	// Get posts based on filters
+	posts, err := categorymodel.GetPostsBySingleCategory(categoryID, userID, showLiked)
+	if err != nil {
+		http.Error(w, "Failed to load posts", http.StatusInternalServerError)
+		return
 	}
 
 	// Prepare template data
 	data := PageData{
-		Posts:      posts,
-		Categories: categories,
-		IsLoggedIn: isLoggedIn,
-		UserID:     userID,
-		UserName:   userName,
+		Posts:          posts,
+		Categories:     categories,
+		IsLoggedIn:     isLoggedIn,
+		UserID:         userID,
+		UserName:       userName,
+		ActiveCategory: categoryID,
+		ShowingLiked:   showLiked,
 	}
 
 	// Parse and execute template

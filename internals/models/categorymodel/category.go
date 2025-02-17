@@ -1,7 +1,6 @@
 package categorymodel
 
 import (
-	"database/sql"
 	"fmt"
 
 	"forum/internals/database"
@@ -51,28 +50,6 @@ func GetAllCategories() ([]Category, error) {
 	return categories, nil
 }
 
-// CreateCategory creates a new category
-func CreateCategory(name string) (int64, error) {
-	query := `INSERT INTO Categories (name) VALUES (?)`
-	result, err := database.DB.Exec(query, name)
-	if err != nil {
-		return 0, err
-	}
-	return result.LastInsertId()
-}
-
-// AddCategoriesToPost adds multiple categories to a post in a transaction
-func AddCategoriesToPost(tx *sql.Tx, postID int64, categoryIDs []int64) error {
-	query := `INSERT INTO Post_Categories (post_id, category_id) VALUES (?, ?)`
-	for _, categoryID := range categoryIDs {
-		_, err := tx.Exec(query, postID, categoryID)
-		if err != nil {
-			return fmt.Errorf("failed to add category %d to post %d: %v", categoryID, postID, err)
-		}
-	}
-	return nil
-}
-
 // SeedCategories inserts default categories if they don't exist
 func SeedCategories() error {
 	var count int
@@ -101,4 +78,29 @@ func SeedCategories() error {
 		}
 	}
 	return nil
+}
+
+// GetPostCategories retrieves category names for a post
+func GetPostCategories(postID int64) ([]string, error) {
+	query := `
+        SELECT c.name
+        FROM Categories c
+        JOIN Post_Categories pc ON c.id = pc.category_id
+        WHERE pc.post_id = ?
+    `
+	rows, err := database.DB.Query(query, postID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var categories []string
+	for rows.Next() {
+		var category string
+		if err := rows.Scan(&category); err != nil {
+			return nil, err
+		}
+		categories = append(categories, category)
+	}
+	return categories, nil
 }

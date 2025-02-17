@@ -50,25 +50,6 @@ func UpdateComment(commentID int64, content string) error {
 	return nil
 }
 
-//DeleteComment removes a comment from the database
-func DeleteComment(commentID int64) error {
-	query := `DELETE FROM Comments WHERE id = ?`
-	result, err := database.DB.Exec(query, commentID)
-	if err != nil {
-		return err
-	}
-
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		return err
-	}
-	if rowsAffected == 0 {
-		return sql.ErrNoRows
-	}
-
-	return nil
-}
-
 // GetCommentByID retrieves a single comment with all its details
 func GetCommentByID(commentID int64) (*viewmodel.CommentView, error) {
 	query := `
@@ -97,32 +78,4 @@ func GetCommentByID(commentID int64) (*viewmodel.CommentView, error) {
 	comment.DislikeCount = dislikes
 
 	return comment, nil
-}
-
-func GetPostComments(postID int64) ([]Comment, error) {
-	query := `
-        SELECT id, post_id, user_id, content, created_at, updated_at
-        FROM Comments
-        WHERE post_id = ?
-        ORDER BY created_at DESC
-    `
-	rows, err := database.DB.Query(query, postID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var comments []Comment
-	for rows.Next() {
-		var comment Comment
-		err := rows.Scan(
-			&comment.ID, &comment.PostID, &comment.UserID,
-			&comment.Content, &comment.CreatedAt, &comment.UpdatedAt,
-		)
-		if err != nil {
-			return nil, err
-		}
-		comments = append(comments, comment)
-	}
-	return comments, nil
 }
