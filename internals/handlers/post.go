@@ -14,11 +14,12 @@ import (
 )
 
 type PageData struct {
-	Posts      []viewmodel.PostView
-	Categories []categorymodel.Category
-	IsLoggedIn bool
-	UserID     int64
-	UserName   string
+	Posts          []viewmodel.PostView
+	Categories     []categorymodel.Category
+	IsLoggedIn     bool
+	UserID         int64
+	UserName       string
+	ActiveCategory int64
 }
 
 // Template functions map
