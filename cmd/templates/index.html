@@ -172,30 +172,178 @@
 
 <!-- Styles -->
 <style>
-  .comment-form textarea {
-    width: 60%; 
-    height: 150px; 
-    resize: both; 
+  /* General Styles */
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
   }
+
+  /* Navbar */
+  .navbar {
+    background-color: #333;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .forum {
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+    background-color: #D34500;
+    padding: 8px 16px;
+    border-radius: 12px;
+  }
+
+  .nav-right {
+    margin-left: auto;
+    display: flex;
+    position:absolute;
+    right: 0;
+    align-items: center;
+    margin-top : 20px;
+    margin-right : 20px;
+  }
+
+  .nav-right a {
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    background-color: #D34500;
+    color: white;
+    margin-left: 10px;
+  }
+
+  .nav-right a:hover {
+    background-color: #ce5b22bd;
+  }
+
+  .user-icon {
+    margin-right: 10px;
+    width: 50px;
+    height: 50px;
+  }
+
+  /* Sidebar */
+  .left-section {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px;
+    width: 250px;
+  }
+
+  .left-section h2 {
+    font-size: 18px;
+  }
+
+  button {
+    background-color: #333;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: #555;
+  }
+
+  /* Main Content */
+  .right-section {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+  }
+
+  .posts-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  .post-card {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .post-title {
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .post-meta {
+    font-size: 14px;
+    color: gray;
+  }
+
+  .post-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+  }
+
+  .like-btn, .dislike-btn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .like-btn:hover, .dislike-btn:hover {
+    color: orange;
+  }
+
+  .view-comments {
+    color: blue;
+    cursor: pointer;
+    border: none;
+    background: none;
+  }
+
+  .comment-form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .comment-form textarea {
+    width: 100%;
+    height: 150px;
+    resize: both;
+  }
+
+  .comment-form button {
+    align-self: flex-end;
+    margin-top: 10px;
+  }
+
   .scrollable {
     max-height: 80vh;
     overflow-y: auto;
   }
+
   .dropdown {
     position: relative;
     display: inline-block;
   }
+
   .dropbtn {
     background: none;
     border: none;
     cursor: pointer;
   }
-  .user-icon {
-    margin-right: 20px;
-    margin-top: 17px;
-    width: 50px;
-    height: 50px;
-  }
+
   .dropdown-content {
     display: none;
     position: absolute;
@@ -205,34 +353,35 @@
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
   }
+
   .dropdown-content a, .dropdown-content span {
     color: black;
     padding: 12px 16px;
     text-decoration: none;
     display: block;
   }
+
   .dropdown-content a:hover {
     background-color: #f1f1f1;
   }
+
   .dropdown:hover .dropdown-content {
     display: block;
   }
-  .nav-right {
-    float: right;
-  }
+
   .login, .signup {
     display: inline-block;
     padding: 10px 20px;
-    margin-top: 30px;
-    margin-right: 30px; /* Add this line to create space between buttons */
+    margin-top: 0;
+    margin-right: 10px;
     border-radius: 25px;
     background-color: #D34500;
     color: white;
     text-decoration: none;
     text-align: center;
   }
+
   .login:hover, .signup:hover {
     background-color: #ce5b22bd;
   }
 </style>
-   
