@@ -33,7 +33,14 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 		authenticated, err := usermodel.AuthenticateUser(email, password)
 		if err != nil || !authenticated {
-			http.Error(w, "Invalid email or password", http.StatusUnauthorized)
+			temp, err := template.ParseFiles("templates/login.html")
+			if err != nil {
+				http.Error(w, "Failed to load login page", http.StatusInternalServerError)
+				return
+			}
+			temp.Execute(w, map[string]interface{}{
+				"ErrorMessage": "Invalid email or password",
+			})
 			return
 		}
 
