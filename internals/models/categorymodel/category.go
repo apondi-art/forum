@@ -106,7 +106,8 @@ func SeedCategories() error {
 }
 
 // GetPostsBySingleCategory retrieves posts for a single category or all posts if categoryID is 0
-func GetPostsBySingleCategory(categoryID int64) ([]viewmodel.PostView, error) {
+// If showLiked is true, it only returns posts liked by the specified user
+func GetPostsBySingleCategory(categoryID int64, userID int64, showLiked bool) ([]viewmodel.PostView, error) {
 	var posts []viewmodel.PostView
 
 	// Base query for all posts or filtered by category
@@ -118,7 +119,27 @@ func GetPostsBySingleCategory(categoryID int64) ([]viewmodel.PostView, error) {
 
 	// Add category filter if categoryID is not 0
 	var args []interface{}
-	if categoryID != 0 {
+
+	// Add liked posts filter if requested
+	if showLiked {
+		query += `
+            JOIN likes_dislikes ld ON p.id = ld.post_id
+            WHERE ld.user_id = ? AND ld.reaction_type = 'like'
+        `
+		args = append(args, userID)
+
+		// If category is also selected, add AND condition
+		if categoryID != 0 {
+			query += `
+                AND p.id IN (
+                    SELECT post_id FROM Post_Categories 
+                    WHERE category_id = ?
+                )
+            `
+			args = append(args, categoryID)
+		}
+	} else if categoryID != 0 {
+		// If only category filter is active
 		query += `
             JOIN Post_Categories pc ON p.id = pc.post_id
             WHERE pc.category_id = ?
