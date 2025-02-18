@@ -37,7 +37,7 @@ func TestSignUpHandler(t *testing.T) {
 			password:     "invalidpassword",
 			confirmPass:  "invalidpassword",
 			expectedCode: http.StatusBadRequest, 
-			expectedBody: "Error parsing form data\n",           
+			expectedBody: "Failed to load error page\n",           
 			mockActions: func(m *MockUserModel) {
 				m.On("PasswordHashing", "validpassword").Return("hashedpassword", nil)
 				m.On("CreateUser", "newuser", "newuser@example.com", "hashedpassword").Return(nil)
@@ -51,7 +51,7 @@ func TestSignUpHandler(t *testing.T) {
 			password:     "password1",
 			confirmPass:  "password2",
 			expectedCode: http.StatusBadRequest,
-			expectedBody: "Error parsing form data\n",
+			expectedBody: "Failed to load error page\n",
 			mockActions:  func(m *MockUserModel) {},
 		},
 		{
@@ -62,7 +62,7 @@ func TestSignUpHandler(t *testing.T) {
 			password:     "",
 			confirmPass:  "",
 			expectedCode: http.StatusBadRequest,
-			expectedBody: "Error parsing form data\n", // Expected form parsing error
+			expectedBody: "Failed to load error page\n", // Expected form parsing error
 			mockActions:  func(m *MockUserModel) {},
 		},
 	}

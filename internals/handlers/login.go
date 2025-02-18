@@ -1,10 +1,12 @@
 package handlers
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
 	"time"
 
+	"forum/internals/auth"
 	"forum/internals/database"
 	"forum/internals/models/usermodel"
 )
@@ -50,7 +52,16 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			ErrorHandler(w, r, "User not found", http.StatusInternalServerError)
 			return
 		}
-
+		oldsession, err := usermodel.GetSessionbyUserID(database.DB, newUser.ID)
+		fmt.Println(oldsession)
+		if err != nil {
+			ErrorHandler(w, r, "Error getting session", http.StatusInternalServerError)
+			return
+		} else {
+			if oldsession != nil {
+				auth.DeleteSession(database.DB, oldsession.ID)
+			}
+		}
 		// Create session
 		session, err := usermodel.CreateSession(database.DB, newUser.ID)
 		if err != nil {

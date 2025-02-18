@@ -67,3 +67,25 @@ func GetSession(db *sql.DB, sessionID string) (*Session, error) {
 	}
 	return session, nil
 }
+
+func GetSessionbyUserID(db *sql.DB, UserID int64) (*Session, error) {
+	session := &Session{}
+	query := `
+        SELECT id, user_id, created_at, expires_at
+        FROM Sessions
+        WHERE user_id = ? AND expires_at > datetime('now')
+    `
+	err := db.QueryRow(query, UserID).Scan(
+		&session.ID,
+		&session.UserID,
+		&session.CreatedAt,
+		&session.ExpiresAt,
+	)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return session, nil
+}
