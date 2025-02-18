@@ -1,0 +1,11 @@
+.git
+.gitignore
+*.md
+Dockerfile
+.dockerignore
+database/*.db
+*.log
+test/
+README*
+docs/
+LICENSE
