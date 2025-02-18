@@ -1,13 +1,14 @@
-//This code is a unit test for the GetAllCategories function using mocking with the sqlmock library. 
-//It tests how the function behaves under different scenarios, such as successful queries, empty results, 
-//database errors, and scan errors. Let’s break it down step by step:
+// This code is a unit test for the GetAllCategories function using mocking with the sqlmock library.
+// It tests how the function behaves under different scenarios, such as successful queries, empty results,
+// database errors, and scan errors. Let’s break it down step by step:
 
-
-/*    database/sql: For interacting with SQL databases.
-    fmt: For formatting strings.
-    reflect: For comparing complex data structures (like slices).
-    testing: Go’s built-in testing framework.
-    github.com/DATA-DOG/go-sqlmock: A library for mocking SQL databases.*/
+/*
+database/sql: For interacting with SQL databases.
+fmt: For formatting strings.
+reflect: For comparing complex data structures (like slices).
+testing: Go’s built-in testing framework.
+github.com/DATA-DOG/go-sqlmock: A library for mocking SQL databases.
+*/
 package categorymodel
 
 import (
@@ -19,10 +20,11 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 )
+
 /*    name: A descriptive name for the test case.
-    mockSetup: A function that sets up the mock database behavior for this test case.
-    expectedResult: The expected result from GetAllCategories.
-    expectedError: Whether an error is expected from GetAllCategories.*/
+mockSetup: A function that sets up the mock database behavior for this test case.
+expectedResult: The expected result from GetAllCategories.
+expectedError: Whether an error is expected from GetAllCategories.*/
 
 func TestGetAllCategories(t *testing.T) {
 	// Test cases
@@ -35,11 +37,11 @@ func TestGetAllCategories(t *testing.T) {
 		{
 			/*    Scenario: The database query returns 3 categories.
 
-    Mock Setup:
-        Create mock rows with 3 categories.
-        Expect the query SELECT id, name FROM Categories ORDER BY name and return the mock rows.
-    Expected Result: The function should return the 3 categories.
-    Expected Error: No error is expected.*/
+			Mock Setup:
+			    Create mock rows with 3 categories.
+			    Expect the query SELECT id, name FROM Categories ORDER BY name and return the mock rows.
+			Expected Result: The function should return the 3 categories.
+			Expected Error: No error is expected.*/
 			name: "successful query with categories",
 			mockSetup: func(mock sqlmock.Sqlmock) {
 				rows := sqlmock.NewRows([]string{"id", "name"}).
