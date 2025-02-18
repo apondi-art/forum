@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Signup Form</title>
+    <title>Login</title>
     <style>
         body {
             background-color: #EAEFF4;
@@ -32,7 +32,6 @@
         }
 
         .input-field {
-
             width: calc(100% - 24px);
             padding: 12px;
             margin-bottom: 12px;
@@ -85,6 +84,11 @@
         a:hover {
             text-decoration: underline;
         }
+
+        .error-message {
+            color: red;
+            margin-top: 10px;
+        }
     </style>
 </head>
 
@@ -101,6 +105,9 @@
                 <span class="icon">🔒</span>
             </div>
 
+            {{if .ErrorMessage}}
+            <p class="error-message">{{.ErrorMessage}}</p>
+            {{end}}
 
             <p class="login-text">Dont have an account? <a href="/signup" class="login-link">Sign Up</a></p>
 

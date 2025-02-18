@@ -35,44 +35,9 @@ document.addEventListener('submit', async (e) => {
                 throw new Error(`Failed to create comment: ${errorText}`);
             }
         
-            const comment = await response.json();
-            
-            // Add new comment to the page
-            const commentsSection = document.getElementById(`comments-${postId}`);
-            const commentHTML = `
-                <div class="comment">
-                    <div class="comment-meta">
-                        <span class="comment-author">${comment.Author}</span>
-                        <span class="comment-date">${formatDate(comment.CreatedAt)}</span>
-                    </div>
-                    <p class="comment-content">${comment.Content}</p>
-                    <div class="comment-actions">
-                        <button class="like-btn" data-comment-id="${comment.ID}">
-                            👍 <span class="like-count">${comment.LikeCount}</span>
-                        </button>
-                        <button class="dislike-btn" data-comment-id="${comment.ID}">
-                            👎 <span class="dislike-count">${comment.DislikeCount}</span>
-                        </button>
-                    </div>
-                </div>
-            `;
-            commentsSection.insertAdjacentHTML('afterbegin', commentHTML);
-            // Clear the form
-            form.querySelector('textarea').value = '';
+            window.location.reload();
         } catch (error) {
             alert('Failed to create comment. Please try again.');
         }
     }
 });
-
-// Helper function to format dates
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-        month: 'short',
-        day: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-}

@@ -46,19 +46,6 @@ func AuthenticateUser(email, password string) (bool, error) {
 	return true, nil
 }
 
-// GetUserByID retrieves a user by ID
-func GetUserByID(id int64) (*User, error) {
-	user := &User{}
-	query := `SELECT id, username, email, password, created_at FROM Users WHERE id = ?`
-	err := database.DB.QueryRow(query, id).Scan(
-		&user.ID, &user.Username, &user.Email, &user.Password, &user.CreatedAt,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return user, nil
-}
-
 // GetUserByEmail retrieves a user by email
 func GetUserByEmail(email string) (*User, error) {
 	user := &User{}
@@ -85,25 +72,3 @@ func CompareHashedPassword(password string, hashed string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hashed), []byte(password))
 	return err == nil
 }
-
-/*Declare a struct that holds the user  login credentials*/
-
-// type LoginRequest struct {
-// 	Username string `json:"username"`
-// 	Password string `json:"password"`
-// }
-
-// type LoginResponse struct {
-// 	Message string `json:"message"`
-// }
-
-// type SignupRequest struct {
-// 	Username    string `json:"username"`
-// 	Email       string `json:"email"`
-// 	Password    string `json:"password"`
-// 	ConfirmPass string `json:"confirm_password"`
-// }
-
-// type SignupResponse struct {
-// 	Message string `json:"message"`
-// }
