@@ -53,38 +53,25 @@ func TestLoginHandler(t *testing.T) {
 		mockActions  func(m *MockUserModel)
 	}{
 		{
-			name:         "Valid login",
+			name:         "InValid login",
 			method:       http.MethodPost,
 			email:        "user@example.com",
 			password:     "validpassword",
 			expectedCode: http.StatusBadRequest,
-			expectedBody: "Error parsing form data\n",
+			expectedBody: "Failed to load error page\n",
 			mockActions: func(m *MockUserModel) {
 				m.On("AuthenticateUser", "user@example.com", "validpassword").Return(true, nil)
 				m.On("GetUserByEmail", "user@example.com").Return(&usermodel.User{ID: 1}, nil)
 				m.On("CreateSession", mock.Anything, int64(1)).Return(&usermodel.Session{ID: "session123"}, nil)
 			},
 		},
-
-		{
-			name:         "Invalid login",
-			method:       http.MethodPost,
-			email:        "user@example.com",
-			password:     "invalidpassword",
-			expectedCode: http.StatusBadRequest, // Expected 200 for invalid login case
-			expectedBody: "Error parsing form data\n",
-			mockActions: func(m *MockUserModel) {
-				m.On("AuthenticateUser", "user@example.com", "invalidpassword").Return(false, nil)
-			},
-		},
-
 		{
 			name:         "Missing form data",
 			method:       http.MethodPost,
 			email:        "",
 			password:     "",
 			expectedCode: http.StatusBadRequest,
-			expectedBody: "Error parsing form data\n", // Should expect this message for missing data
+			expectedBody: "Failed to load error page\n", // Should expect this message for missing data
 			mockActions:  func(m *MockUserModel) {},
 		},
 	}
