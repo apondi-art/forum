@@ -13,7 +13,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		temp, err := template.ParseFiles("templates/login.html")
 		if err != nil {
-			http.Error(w, "Failed to load login page", http.StatusInternalServerError)
+			ErrorHandler(w, r, "Failed to load login page", http.StatusInternalServerError)
 			return
 		}
 		temp.Execute(w, nil)
@@ -23,7 +23,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		// Parse form data
 		if err := r.ParseForm(); err != nil {
-			http.Error(w, "Error parsing form data", http.StatusBadRequest)
+			ErrorHandler(w, r, "Error parsing form data", http.StatusBadRequest)
 			return
 		}
 
@@ -35,7 +35,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil || !authenticated {
 			temp, err := template.ParseFiles("templates/login.html")
 			if err != nil {
-				http.Error(w, "Failed to load login page", http.StatusInternalServerError)
+				ErrorHandler(w, r, "Failed to load login page", http.StatusInternalServerError)
 				return
 			}
 			temp.Execute(w, map[string]interface{}{
@@ -47,14 +47,14 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		// Get user info
 		newUser, err := usermodel.GetUserByEmail(email)
 		if err != nil || newUser == nil {
-			http.Error(w, "User not found", http.StatusInternalServerError)
+			ErrorHandler(w, r, "User not found", http.StatusInternalServerError)
 			return
 		}
 
 		// Create session
 		session, err := usermodel.CreateSession(database.DB, newUser.ID)
 		if err != nil {
-			http.Error(w, "Error creating session", http.StatusInternalServerError)
+			ErrorHandler(w, r, "Error creating session", http.StatusInternalServerError)
 			return
 		}
 

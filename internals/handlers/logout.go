@@ -21,7 +21,7 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	// Delete session from the database
 	err = auth.DeleteSession(database.DB, cookie.Value)
 	if err != nil {
-		http.Error(w, "Error logging out", http.StatusInternalServerError)
+		ErrorHandler(w, r, "Error logging out", http.StatusInternalServerError)
 		return
 	}
 

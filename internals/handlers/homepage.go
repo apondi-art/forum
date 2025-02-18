@@ -12,7 +12,7 @@ import (
 // Homepage handles the main page
 func Homepage(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
-		http.NotFound(w, r)
+		ErrorHandler(w, r, "Page not found", http.StatusNotFound)
 		return
 	}
 
@@ -26,7 +26,7 @@ func Homepage(w http.ResponseWriter, r *http.Request) {
 	// Get all categories for the sidebar
 	categories, err := categorymodel.GetAllCategories()
 	if err != nil {
-		http.Error(w, "Failed to load categories", http.StatusInternalServerError)
+		ErrorHandler(w, r, "Failed to load categories", http.StatusInternalServerError)
 		return
 	}
 
@@ -36,7 +36,7 @@ func Homepage(w http.ResponseWriter, r *http.Request) {
 	if categoryIDStr != "" {
 		categoryID, err = strconv.ParseInt(categoryIDStr, 10, 64)
 		if err != nil {
-			http.Error(w, "Invalid category ID", http.StatusBadRequest)
+			ErrorHandler(w, r, "Invalid category ID", http.StatusBadRequest)
 			return
 		}
 	}
@@ -47,7 +47,7 @@ func Homepage(w http.ResponseWriter, r *http.Request) {
 	// Get posts based on filters
 	posts, err := categorymodel.GetPostsBySingleCategory(categoryID, userID, showLiked)
 	if err != nil {
-		http.Error(w, "Failed to load posts", http.StatusInternalServerError)
+		ErrorHandler(w, r, "Failed to load posts", http.StatusInternalServerError)
 		return
 	}
 
@@ -65,12 +65,12 @@ func Homepage(w http.ResponseWriter, r *http.Request) {
 	// Parse and execute template
 	tmpl, err := template.New("index.html").Funcs(funcMap).ParseFiles("templates/index.html")
 	if err != nil {
-		http.Error(w, "Failed to parse template", http.StatusInternalServerError)
+		ErrorHandler(w, r, "Failed to parse template", http.StatusInternalServerError)
 		return
 	}
 
 	if err := tmpl.Execute(w, data); err != nil {
-		http.Error(w, "Failed to execute template", http.StatusInternalServerError)
+		ErrorHandler(w, r, "Failed to execute template", http.StatusInternalServerError)
 		return
 	}
 }
