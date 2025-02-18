@@ -57,8 +57,8 @@ func TestLoginHandler(t *testing.T) {
 			method:       http.MethodPost,
 			email:        "user@example.com",
 			password:     "validpassword",
-			expectedCode: http.StatusBadRequest, // Expecting 303 (redirect) for valid login
-			expectedBody: "Error parsing form data\n",                  // No content expected in the response body for successful login
+			expectedCode: http.StatusBadRequest,
+			expectedBody: "Error parsing form data\n",
 			mockActions: func(m *MockUserModel) {
 				m.On("AuthenticateUser", "user@example.com", "validpassword").Return(true, nil)
 				m.On("GetUserByEmail", "user@example.com").Return(&usermodel.User{ID: 1}, nil)
@@ -110,16 +110,10 @@ func TestLoginHandler(t *testing.T) {
 
 			// Create a mock HTTP response writer
 			recorder := httptest.NewRecorder()
-
-			// Call the handler
 			LoginHandler(recorder, req)
-
-			// Check the response code
 			if recorder.Code != tt.expectedCode {
 				t.Errorf("Expected status code %d, got %d", tt.expectedCode, recorder.Code)
 			}
-
-			// Check the response body (for errors)
 			if recorder.Body.String() != tt.expectedBody {
 				t.Errorf("Expected body %q, got %q", tt.expectedBody, recorder.Body.String())
 			}
