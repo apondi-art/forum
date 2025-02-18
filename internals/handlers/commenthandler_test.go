@@ -54,7 +54,6 @@ func TestHandleCreateComment(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// Run the handler
 			HandleCreateComment(tt.args.w, tt.args.r)
-			// Check the status code
 			if tt.args.w.(*httptest.ResponseRecorder).Code != http.StatusOK && tt.args.w.(*httptest.ResponseRecorder).Code != http.StatusMethodNotAllowed &&
 				tt.args.w.(*httptest.ResponseRecorder).Code != http.StatusUnauthorized &&
 				tt.args.w.(*httptest.ResponseRecorder).Code != http.StatusBadRequest {
