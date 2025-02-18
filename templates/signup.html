@@ -85,6 +85,16 @@
         a:hover {
             text-decoration: underline;
         }
+        .error-message {
+            color: #ff3e3e;
+            background-color: rgba(255, 62, 62, 0.1);
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            text-align: center;
+            border: 1px solid rgba(255, 62, 62, 0.2);
+        }
     </style>
 </head>
 
@@ -101,6 +111,11 @@
                 <input type="password" placeholder="Password"  name="password" class="input-field"  required>
                 <span class="icon">🔒</span>
             </div>
+            {{if .Error}}
+            <div class="error-message">
+                {{.Error}}
+            </div>
+            {{end}}
             <div class="password-wrapper">
                 <input type="password" placeholder="Re-Password"  name="confirm_pass" class="input-field" required>
                 <span class="icon">🔒</span>
@@ -108,7 +123,7 @@
 
             <p class="login-text">Have an account? <a href="/login" class="login-link">Log in</a></p>
 
-            <button type="submit" id="signup-button">Next</button>
+            <button type="submit" id="signup-button">SignUp</button>
         </form>
     </div>
 </body>
