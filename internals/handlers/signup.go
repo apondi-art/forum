@@ -9,7 +9,18 @@ import (
 	"forum/internals/models/usermodel"
 )
 
+
+type SignupData struct {
+	Error string
+}
+
 func SignUpHandler(w http.ResponseWriter, r *http.Request) {
+
+	temp, err := template.ParseFiles("templates/signup.html")
+    if err != nil {
+        log.Fatal(err)
+    }
+
 	// Ensure it's a POST request
 	if r.Method == http.MethodGet {
 		temp, err := template.ParseFiles("templates/signup.html")
@@ -33,7 +44,15 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
 		email := r.FormValue("email")
 		password := r.FormValue("password")
 		confirmPass := r.FormValue("confirm_pass")
-
+         
+         // Validate password match
+		if password != confirmPass {
+			data := SignupData{
+				Error: "Passwords do not match",
+			}
+			temp.Execute(w, data)
+			return
+		}
 		// Validate password match
 		if password != confirmPass {
 			ErrorHandler(w, r, "Passwords do not match", http.StatusBadRequest)
@@ -50,7 +69,7 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
 
 		// Store user in the database
 		if err := usermodel.CreateUser(username, email, hashedPassword); err != nil {
-			ErrorHandler(w, r, "Failed to create user", http.StatusInternalServerError)
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			fmt.Println("Error inserting user:", err)
 			return
 		}
