@@ -43,14 +43,14 @@ var funcMap = template.FuncMap{
 
 func HandleCreatePost(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		ErrorHandler(w, r, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
 	// Check if user is logged in
 	userID, isLoggedIn := auth.GetUserFromSession(r)
 	if !isLoggedIn {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		ErrorHandler(w, r, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
 
@@ -62,21 +62,21 @@ func HandleCreatePost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		ErrorHandler(w, r, "Invalid request body", http.StatusBadRequest)
 		return
 	}
 
 	// Create the post
 	postID, err := postmodel.CreatePost(userID, request.Title, request.Content, request.Categories)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Failed to create post: %v", err), http.StatusInternalServerError)
+		ErrorHandler(w, r, fmt.Sprintf("Failed to create post: %v", err), http.StatusInternalServerError)
 		return
 	}
 
 	// Return the created post
 	post, err := viewmodel.GetPostWithDetails(postID)
 	if err != nil {
-		http.Error(w, "Failed to retrieve created post", http.StatusInternalServerError)
+		ErrorHandler(w, r, "Failed to retrieve created post", http.StatusInternalServerError)
 		return
 	}
 
