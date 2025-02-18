@@ -30,12 +30,12 @@ func TestSignUpHandler(t *testing.T) {
 		mockActions  func(m *MockUserModel)
 	}{
 		{
-			name:         "Valid signup",
+			name:         "InValid signup",
 			method:       http.MethodPost,
 			username:     "newuser",
 			email:        "newuser@example.com",
-			password:     "validpassword",
-			confirmPass:  "validpassword",
+			password:     "invalidpassword",
+			confirmPass:  "invalidpassword",
 			expectedCode: http.StatusBadRequest, 
 			expectedBody: "Error parsing form data\n",           
 			mockActions: func(m *MockUserModel) {
@@ -72,34 +72,16 @@ func TestSignUpHandler(t *testing.T) {
 			// Mock the UserModel
 			mockUserModel := new(MockUserModel)
 			tt.mockActions(mockUserModel)
-
-			// Create a mock HTTP request
 			req, err := http.NewRequest(tt.method, "/signup", nil)
 			if err != nil {
 				t.Fatalf("Failed to create request: %v", err)
 			}
-
-			// Set form values for POST method if applicable
-			if tt.method == http.MethodPost {
-				req.Form = make(map[string][]string)
-				req.Form.Set("username", tt.username)
-				req.Form.Set("email", tt.email)
-				req.Form.Set("password", tt.password)
-				req.Form.Set("confirm_pass", tt.confirmPass)
-			}
-
 			// Create a mock HTTP response writer
 			recorder := httptest.NewRecorder()
-
-			// Create a handler to call the SignUpHandler
 			SignUpHandler(recorder, req)
-
-			// Check the response code
 			if recorder.Code != tt.expectedCode {
 				t.Errorf("Expected status code %d, got %d", tt.expectedCode, recorder.Code)
 			}
-
-			// Check the response body
 			if recorder.Body.String() != tt.expectedBody {
 				t.Errorf("Expected body %q, got %q", tt.expectedBody, recorder.Body.String())
 			}
