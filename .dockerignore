@@ -1,8 +1,8 @@
 .git
 .gitignore
 *.md
-Docker/Dockerfile
-Docker/.dockerignore
+Dockerfile
+.dockerignore
 database/*.db
 *.log
 test/
