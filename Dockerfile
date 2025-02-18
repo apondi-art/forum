@@ -17,6 +17,10 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod tidy
 
+# Add the missing dependencies
+RUN go get github.com/mattn/go-sqlite3
+RUN go get golang.org/x/crypto/bcrypt
+
 # Step 5: Copy the rest of the application files to the container
 COPY . .
 
@@ -37,8 +41,11 @@ COPY --from=builder /app/forum-app /app/forum-app
 COPY static/ /app/static/
 COPY templates/ /app/templates/
 
-# Step 11: Expose the port the app runs on
+# Step 11: Ensure the database schema and other necessary files are copied
+COPY --from=builder /app/internals/database/ /app/internals/database/
+
+# Step 12: Expose the port the app runs on
 EXPOSE 8080
 
-# Step 12: Run the app when the container starts
+# Step 13: Run the app when the container starts
 CMD ["./forum-app"]
