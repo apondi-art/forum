@@ -21,6 +21,7 @@ type PageData struct {
 	UserName       string
 	ActiveCategory int64
 	ShowingLiked   bool
+	MyPosts        bool
 }
 
 // Template functions map

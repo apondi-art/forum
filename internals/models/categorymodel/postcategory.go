@@ -8,7 +8,7 @@ import (
 
 // GetPostsBySingleCategory retrieves posts for a single category or all posts if categoryID is 0
 // If showLiked is true, it only returns posts liked by the specified user
-func GetPostsBySingleCategory(categoryID int64, userID int64, showLiked bool) ([]viewmodel.PostView, error) {
+func GetPostsBySingleCategory(categoryID int64, userID int64, showLiked, myPosts bool) ([]viewmodel.PostView, error) {
 	var posts []viewmodel.PostView
 
 	// Base query for all posts or filtered by category
@@ -39,6 +39,12 @@ func GetPostsBySingleCategory(categoryID int64, userID int64, showLiked bool) ([
             `
 			args = append(args, categoryID)
 		}
+	} else if myPosts {
+		query += `
+            WHERE p.user_id = ?
+        `
+		args = append(args, userID)
+
 	} else if categoryID != 0 {
 		// If only category filter is active
 		query += `
