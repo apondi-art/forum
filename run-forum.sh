@@ -26,5 +26,3 @@ fi
 echo "Starting forum-app container..."
 docker run -p 8080:8080 --name forum-app-container forum-app
 
-# Note: You might want to add -d flag to run in detached mode
-# docker run -d -p 8080:8080 --name forum-app-container forum-app
