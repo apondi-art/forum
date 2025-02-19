@@ -41,7 +41,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			temp.Execute(w, map[string]interface{}{
-				"ErrorMessage": "Invalid email or password",
+				"ErrorMessage": "Please check your email or password, then try again !!!",
 			})
 			return
 		}
