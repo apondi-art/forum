@@ -43,9 +43,10 @@ func Homepage(w http.ResponseWriter, r *http.Request) {
 
 	// Check if showing liked posts
 	showLiked := r.URL.Query().Get("liked") == "true"
+	myPosts := r.URL.Query().Get("myPosts") == "true"
 
 	// Get posts based on filters
-	posts, err := categorymodel.GetPostsBySingleCategory(categoryID, userID, showLiked)
+	posts, err := categorymodel.GetPostsBySingleCategory(categoryID, userID, showLiked, myPosts)
 	if err != nil {
 		ErrorHandler(w, r, "Failed to load posts", http.StatusInternalServerError)
 		return
@@ -60,6 +61,7 @@ func Homepage(w http.ResponseWriter, r *http.Request) {
 		UserName:       userName,
 		ActiveCategory: categoryID,
 		ShowingLiked:   showLiked,
+		MyPosts:        myPosts,
 	}
 
 	// Parse and execute template
