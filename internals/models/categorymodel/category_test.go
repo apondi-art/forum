@@ -1,137 +1,235 @@
-// This code is a unit test for the GetAllCategories function using mocking with the sqlmock library.
-// It tests how the function behaves under different scenarios, such as successful queries, empty results,
-// database errors, and scan errors. Let’s break it down step by step:
-
-/*
-database/sql: For interacting with SQL databases.
-fmt: For formatting strings.
-reflect: For comparing complex data structures (like slices).
-testing: Go’s built-in testing framework.
-github.com/DATA-DOG/go-sqlmock: A library for mocking SQL databases.
-*/
 package categorymodel
 
 import (
-	"fmt"
-	"reflect"
+	"database/sql"
+	"forum/internals/database"
 	"testing"
 
-	"forum/internals/database"
-
-	"github.com/DATA-DOG/go-sqlmock"
+	_ "github.com/mattn/go-sqlite3"
 )
 
-/*    name: A descriptive name for the test case.
-mockSetup: A function that sets up the mock database behavior for this test case.
-expectedResult: The expected result from GetAllCategories.
-expectedError: Whether an error is expected from GetAllCategories.*/
+func SetupTestDB(t *testing.T) (*sql.DB, func()) {
+    db, err := sql.Open("sqlite3", ":memory:")
+    if err != nil {
+        t.Fatalf("Failed to open test database: %v", err)
+    }
 
-func TestGetAllCategories(t *testing.T) {
-	// Test cases
-	tests := []struct {
-		name           string
-		mockSetup      func(mock sqlmock.Sqlmock)
-		expectedResult []Category
-		expectedError  bool
-	}{
-		{
-			/*    Scenario: The database query returns 3 categories.
+    // Create the Categories table
+    _, err = db.Exec(`
+        CREATE TABLE IF NOT EXISTS Categories (
+            id INTEGER PRIMARY KEY,
+            name TEXT NOT NULL
+        );
+    `)
+    if err != nil {
+        t.Fatalf("Failed to create Categories table: %v", err)
+    }
 
-			Mock Setup:
-			    Create mock rows with 3 categories.
-			    Expect the query SELECT id, name FROM Categories ORDER BY name and return the mock rows.
-			Expected Result: The function should return the 3 categories.
-			Expected Error: No error is expected.*/
-			name: "successful query with categories",
-			mockSetup: func(mock sqlmock.Sqlmock) {
-				rows := sqlmock.NewRows([]string{"id", "name"}).
-					AddRow(1, "Sports").
-					AddRow(2, "Lifestyle").
-					AddRow(3, "Education")
-				mock.ExpectQuery("SELECT id, name FROM Categories ORDER BY name").
-					WillReturnRows(rows)
-			},
-			expectedResult: []Category{
-				{ID: 1, Name: "Sports"},
-				{ID: 2, Name: "Lifestyle"},
-				{ID: 3, Name: "Education"},
-			},
-			expectedError: false,
-		},
-		{
-			name: "empty result returns default categories",
-			mockSetup: func(mock sqlmock.Sqlmock) {
-				rows := sqlmock.NewRows([]string{"id", "name"})
-				mock.ExpectQuery("SELECT id, name FROM Categories ORDER BY name").
-					WillReturnRows(rows)
-			},
-			expectedResult: DefaultCategories,
-			expectedError:  false,
-		},
-		{
-			name: "database error returns default categories",
-			mockSetup: func(mock sqlmock.Sqlmock) {
-				mock.ExpectQuery("SELECT id, name FROM Categories ORDER BY name").
-					WillReturnError(fmt.Errorf("database connection error"))
-			},
-			expectedResult: DefaultCategories,
-			expectedError:  false,
-		},
-		{
-			name: "scan error returns error",
-			mockSetup: func(mock sqlmock.Sqlmock) {
-				rows := sqlmock.NewRows([]string{"id", "name"}).
-					AddRow("invalid", "Sports") // This will cause a scan error
-				mock.ExpectQuery("SELECT id, name FROM Categories ORDER BY name").
-					WillReturnRows(rows)
-			},
-			expectedResult: nil,
-			expectedError:  true,
-		},
-	}
+    // Create Post_Categories table for testing GetPostCategories
+    _, err = db.Exec(`
+        CREATE TABLE IF NOT EXISTS Post_Categories (
+            post_id INTEGER,
+            category_id INTEGER,
+            PRIMARY KEY (post_id, category_id),
+            FOREIGN KEY (category_id) REFERENCES Categories(id)
+        );
+    `)
+    if err != nil {
+        t.Fatalf("Failed to create Post_Categories table: %v", err)
+    }
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			// Create a new mock database connection
-			db, mock, err := sqlmock.New()
-			if err != nil {
-				t.Fatalf("Failed to create mock database: %v", err)
-			}
-			defer db.Close()
+    // Restore global DB and return cleanup function
+    oldDB := database.DB
+    database.DB = db
+    return db, func() {
+        db.Close()
+        database.DB = oldDB
+    }
+}
 
-			// Replace the global DB with our mock
-			oldDB := database.DB
-			database.DB = db
-			defer func() { database.DB = oldDB }()
 
-			// Set up the mock expectations
-			tt.mockSetup(mock)
+func TestSeedCategories(t *testing.T) {
+    tests := []struct {
+        name           string
+        initialData    []Category
+        expectedCount  int
+        expectedError  bool
+    }{
+        {
+            name:          "empty database gets seeded",
+            initialData:   nil,
+            expectedCount: len(DefaultCategories),
+            expectedError: false,
+        },
+        {
+            name:          "database with data doesn't get seeded",
+            initialData:   []Category{{ID: 99, Name: "Test Category"}},
+            expectedCount: 1, // Should keep existing data only
+            expectedError: false,
+        },
+    }
 
-			// Call the function under test
-			result, err := GetAllCategories()
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            db, cleanup := SetupTestDB(t)
+            defer cleanup()
 
-			// Check error expectations
-			if tt.expectedError && err == nil {
-				t.Error("Expected an error but got none")
-			}
-			if !tt.expectedError && err != nil {
-				t.Errorf("Did not expect an error but got: %v", err)
-			}
+            // Insert initial data if needed
+            if len(tt.initialData) > 0 {
+                for _, cat := range tt.initialData {
+                    _, err := db.Exec("INSERT INTO Categories (id, name) VALUES (?, ?)", cat.ID, cat.Name)
+                    if err != nil {
+                        t.Fatalf("Failed to insert initial data: %v", err)
+                    }
+                }
+            }
 
-			// For error cases, we don't need to check the result
-			if tt.expectedError {
-				return
-			}
+            // Call the function under test
+            err := SeedCategories()
 
-			// Check that result matches expected
-			if !reflect.DeepEqual(result, tt.expectedResult) {
-				t.Errorf("Expected %+v but got %+v", tt.expectedResult, result)
-			}
+            // Check error expectations
+            if tt.expectedError && err == nil {
+                t.Errorf("Expected an error but got none")
+            }
+            if !tt.expectedError && err != nil {
+                t.Errorf("Did not expect an error but got: %v", err)
+            }
 
-			// Ensure all expectations were met
-			if err := mock.ExpectationsWereMet(); err != nil {
-				t.Errorf("Unfulfilled expectations: %s", err)
-			}
-		})
-	}
+            // Verify the count of categories in DB
+            var count int
+            err = db.QueryRow("SELECT COUNT(*) FROM Categories").Scan(&count)
+            if err != nil {
+                t.Fatalf("Failed to count categories: %v", err)
+            }
+            
+            if count != tt.expectedCount {
+                t.Errorf("Expected %d categories in DB, but found %d", tt.expectedCount, count)
+            }
+
+            // If seeding should have happened, verify all default categories exist
+            if tt.initialData == nil {
+                for _, defaultCat := range DefaultCategories {
+                    var name string
+                    err = db.QueryRow("SELECT name FROM Categories WHERE id = ?", defaultCat.ID).Scan(&name)
+                    if err != nil {
+                        t.Errorf("Default category ID %d not found: %v", defaultCat.ID, err)
+                    }
+                    if name != defaultCat.Name {
+                        t.Errorf("Default category name mismatch for ID %d: expected %s, got %s", 
+                            defaultCat.ID, defaultCat.Name, name)
+                    }
+                }
+            }
+        })
+    }
+}
+
+func TestGetPostCategories(t *testing.T) {
+    tests := []struct {
+        name             string
+        postID           int64
+        initialCategories []Category
+        postCategoryLinks []struct{postID, categoryID int64}
+        expectedResult   []string
+        expectedError    bool
+    }{
+        {
+            name:   "post with multiple categories",
+            postID: 1,
+            initialCategories: []Category{
+                {ID: 1, Name: "Sports"},
+                {ID: 2, Name: "Lifestyle"},
+                {ID: 3, Name: "Education"},
+            },
+            postCategoryLinks: []struct{postID, categoryID int64}{
+                {1, 1}, // Post 1 has Sports category
+                {1, 3}, // Post 1 has Education category
+            },
+            expectedResult: []string{"Sports", "Education"},
+            expectedError:  false,
+        },
+        {
+            name:   "post with no categories",
+            postID: 2,
+            initialCategories: []Category{
+                {ID: 1, Name: "Sports"},
+                {ID: 2, Name: "Lifestyle"},
+            },
+            postCategoryLinks: []struct{postID, categoryID int64}{
+                {1, 1}, // Only Post 1 has a category
+            },
+            expectedResult: []string{}, // Empty result
+            expectedError:  false,
+        },
+        {
+            name:   "non-existent post",
+            postID: 999,
+            initialCategories: []Category{
+                {ID: 1, Name: "Sports"},
+            },
+            postCategoryLinks: []struct{postID, categoryID int64}{
+                {1, 1}, // Only Post 1 has a category
+            },
+            expectedResult: []string{}, // Empty result for non-existent post
+            expectedError:  false,
+        },
+    }
+
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            db, cleanup := SetupTestDB(t)
+            defer cleanup()
+
+            // Insert categories
+            for _, cat := range tt.initialCategories {
+                _, err := db.Exec("INSERT INTO Categories (id, name) VALUES (?, ?)", cat.ID, cat.Name)
+                if err != nil {
+                    t.Fatalf("Failed to insert categories: %v", err)
+                }
+            }
+
+            // Insert post-category links
+            for _, link := range tt.postCategoryLinks {
+                _, err := db.Exec("INSERT INTO Post_Categories (post_id, category_id) VALUES (?, ?)", 
+                    link.postID, link.categoryID)
+                if err != nil {
+                    t.Fatalf("Failed to insert post-category links: %v", err)
+                }
+            }
+
+            // Call the function under test
+            result, err := GetPostCategories(tt.postID)
+
+            // Check error expectations
+            if tt.expectedError && err == nil {
+                t.Errorf("Expected an error but got none")
+            }
+            if !tt.expectedError && err != nil {
+                t.Errorf("Did not expect an error but got: %v", err)
+            }
+
+            // Sort both slices to ensure consistent comparison
+            // (Assuming order doesn't matter for category names)
+            // Note: You might need to implement a function to sort strings if not imported
+            
+            // Compare lengths first
+            if len(result) != len(tt.expectedResult) {
+                t.Errorf("Expected %d categories but got %d", len(tt.expectedResult), len(result))
+            } else {
+                // Simple check for each expected item
+                for _, expected := range tt.expectedResult {
+                    found := false
+                    for _, actual := range result {
+                        if expected == actual {
+                            found = true
+                            break
+                        }
+                    }
+                    if !found {
+                        t.Errorf("Expected category '%s' not found in result", expected)
+                    }
+                }
+            }
+        })
+    }
 }
