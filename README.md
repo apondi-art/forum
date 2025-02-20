@@ -16,9 +16,11 @@ This project is a web-based forum application where users can create, view, and 
 - Frontend: JavaScript, HTML, CSS
 - Backend: Golang
 - Database: SQL
+- Third Party Dependencies: [go-sqlite3](https://github.com/mattn/go-sqlite3), [bcrypt](https://pkg.go.dev/golang.org/x/crypto/bcrypt)
 
 ## Setup Instructions
 
+### Running Directly with Go
 1. Clone the repository:
     ```sh
     git clone https://learn.zone01kisumu.ke/git/quochieng/forum.git
@@ -27,13 +29,34 @@ This project is a web-based forum application where users can create, view, and 
     ```sh
     cd forum
     ```
-3. Navigate to the `cmd` folder:
+3. Run the project:
     ```sh
-    cd cmd
+    go run cmd/main.go
     ```
-4. Run the project:
+
+### Running with Docker
+
+You can also run the project using Docker. Two options are available:
+
+#### 1. Using the Provided Script
+The run-forum.sh script builds the Docker image and spins up the container for you.
+1. Make sure the script is executable:
     ```sh
-    go run .
+    chmod +x run-forum.sh
+    ```
+2. Run the script:
+    ```sh
+    ./run-forum.sh
+    ```
+
+#### 2. Manually with Docker Commands
+1. Build the Docker image:
+    ```sh
+    docker build -t forum-app .
+    ```
+2. Run the Docker container (ensure no container named `forum-app-container` is already running; otherwise, remove it with `docker rm -f forum-app-container`):
+    ```sh
+    docker run -p 8080:8080 --name forum-app-container forum-app
     ```
 
 ## Figma Design
